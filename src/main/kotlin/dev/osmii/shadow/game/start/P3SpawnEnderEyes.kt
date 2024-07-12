@@ -1,10 +1,10 @@
 package dev.osmii.shadow.game.start
 
-import com.fastasyncworldedit.core.history.change.MutableBlockChange
 import com.sk89q.worldedit.WorldEdit
 import com.sk89q.worldedit.bukkit.BukkitAdapter
 import com.sk89q.worldedit.function.mask.*
 import com.sk89q.worldedit.function.pattern.RandomPattern
+import com.sk89q.worldedit.history.change.BlockChange
 import com.sk89q.worldedit.history.change.Change
 import com.sk89q.worldedit.math.BlockVector3
 import com.sk89q.worldedit.math.Vector3
@@ -79,12 +79,12 @@ class P3SpawnEnderEyes(private val shadow: Shadow) {
         // Creates a mask that checks for this
         strongholdMask.add(
             OffsetMask(
-                Masks.negate(ExistingBlockMask(session)), BlockVector3.at(0, 1, 0), -64, 315
+                Masks.negate(ExistingBlockMask(session)), BlockVector3.at(0, 1, 0)
             )
         ) // FAWE only has support for OffsetMask, not OffsetsMasks
         strongholdMask.add(
             OffsetMask(
-                Masks.negate(ExistingBlockMask(session)), BlockVector3.at(0, 2, 0), -64, 315
+                Masks.negate(ExistingBlockMask(session)), BlockVector3.at(0, 2, 0)
             )
         )
 
@@ -102,16 +102,15 @@ class P3SpawnEnderEyes(private val shadow: Shadow) {
             overworld.spawnLocation.z - WORLD_BORDER_SIZE
         )
 
-        var strongholdBoundingBox: BoundingBox? = null
-
-        for (bb in shadow.boundingBoxSet) {
-            if (worldBorderBoundingBox.overlaps(bb)) {
-                strongholdBoundingBox = bb
-                break
-            }
+        if (shadow.strongholdBoundingBox == null) {
+            shadow.server.broadcast(
+                MiniMessage.miniMessage().deserialize(
+                    "<red>Failed to spawn ender eyes, couldn't re-find the stronghold</red>"
+                )
+            )
         }
 
-        strongholdBoundingBox = worldBorderBoundingBox.intersection(strongholdBoundingBox!!)
+        val strongholdBoundingBox: BoundingBox = worldBorderBoundingBox.intersection(shadow.strongholdBoundingBox!!)
 
         val region = CuboidRegion(
             BlockVector3.at(strongholdBoundingBox.minX, strongholdBoundingBox.minY, strongholdBoundingBox.minZ),
@@ -139,9 +138,7 @@ class P3SpawnEnderEyes(private val shadow: Shadow) {
 
         val iter: Iterator<Change> = session.changeSet.backwardIterator()
         while (iter.hasNext()) {
-            possiblePositions.add((iter.next() as MutableBlockChange).let {
-                Vector3.at(it.x.toDouble(), it.y.toDouble(), it.z.toDouble())
-            })
+            possiblePositions.add((iter.next() as BlockChange).position.toVector3())
         }
 
         if (possiblePositions.size > ENDER_EYE_STRONGHOLD_COUNT) {
@@ -217,6 +214,7 @@ class P3SpawnEnderEyes(private val shadow: Shadow) {
     }
 
     private fun createEnderEye(loc: Location): Item {
+
         loc.chunk.load()
         loc.add(0.5, 1.0, 0.5)
 
@@ -231,6 +229,8 @@ class P3SpawnEnderEyes(private val shadow: Shadow) {
         display.itemStack = e.itemStack
         display.displayHeight = 3.0F
         display.displayWidth = 3.0F
+
+        shadow.eyes[e.uniqueId] = display
 
         return e
     }

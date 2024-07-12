@@ -32,7 +32,10 @@ class HandleSheriffBow(val shadow: Shadow) : Listener {
     fun onHit(e: EntityDamageByEntityEvent) {
         if (e.damager.entityId !in sheriffArrows.keys) return
         if (sheriffs[e.damager.entityId] == null || sheriffs[e.damager.entityId]?.isOnline == false) return
+
+
         e.damage = 1000.0
+
         if (e.entityType == EntityType.ENDER_DRAGON || e.entityType == EntityType.WITHER) {
             // Disable damage to boss entities
             e.damage = 0.0

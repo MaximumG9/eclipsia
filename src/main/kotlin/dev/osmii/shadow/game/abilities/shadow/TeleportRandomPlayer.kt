@@ -5,31 +5,29 @@ import dev.osmii.shadow.enums.PlayableFaction
 import dev.osmii.shadow.enums.PlayableRole
 import dev.osmii.shadow.game.abilities.Ability
 import dev.osmii.shadow.util.TimeUtil
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-class KillOneNearby : Ability {
-    override val item: ItemStack = ItemStack(Material.NETHERITE_SWORD)
+class TeleportRandomPlayer : Ability {
+    override val item: ItemStack = ItemStack(Material.WATER_BUCKET)
 
     init {
         item.itemMeta = item.itemMeta.apply {
             this.lore(
                 listOf(
                     MiniMessage.miniMessage()
-                        .deserialize("<!i><gray>Instantly kill the nearest player within</gray> <blue>18</blue> <gray>blocks.</gray></!i>")
+                        .deserialize("<!i><gray>Teleport a random player within </gray><blue>18</blue> <gray>blocks of you 30 blocks above the surface</gray></!i>")
                 )
             )
-            this.displayName(MiniMessage.miniMessage().deserialize("<!i><red>Assassinate</red></!i>"))
+            this.displayName(MiniMessage.miniMessage().deserialize("<!i><red>BEGONE</red></!i>"))
         }
     }
 
     override fun apply(player: Player, shadow: Shadow) {
         val cooldown =
-            TimeUtil.checkCooldown(shadow, COOLDOWN, INITIAL_COOLDOWN, "singlekillnearby", player.uniqueId.toString())
+            TimeUtil.checkCooldown(shadow, COOLDOWN, INITIAL_COOLDOWN, COOLDOWN_KEY, player.uniqueId.toString())
         if (cooldown > 0) {
             shadow.logger.info("Cooldown: $cooldown")
             player.sendMessage(
@@ -55,28 +53,28 @@ class KillOneNearby : Ability {
         }
 
         if (targets.isNotEmpty()) {
-            val killed = targets.sortedBy { target: Player ->
-                player.location.distance(target.location)
-            }
-            killed[0].health = 0.0
-            killed[0].sendHealthUpdate()
-            killed[0].location.world.strikeLightningEffect(killed[0].location)
+            val target = targets.random()
+
+            val teleportPosition = target.world.getHighestBlockAt(target.location).location
+            target.teleport(teleportPosition.add(0.0,30.0,0.0))
+
+            target.location.world.strikeLightningEffect(target.location)
             player.sendMessage(
                 MiniMessage.miniMessage().deserialize(
-                    "<red>Killed</red> <blue>${killed[0].name}</blue><red>.</red>"
+                    "<red>Teleported</red> <blue>${target.name}</blue><red>.</red>"
                 )
             )
 
-            TimeUtil.setCooldown(shadow, "singlekillnearby", player.uniqueId.toString())
+            TimeUtil.setCooldown(shadow, COOLDOWN_KEY, player.uniqueId.toString())
         } else {
-            player.sendMessage(MiniMessage.miniMessage().deserialize("<red>No nearby players to kill.</red>"))
+            player.sendMessage(MiniMessage.miniMessage().deserialize("<red>No nearby players to teleport.</red>"))
         }
 
     }
 
     companion object {
         private const val COOLDOWN = 7 * 60
-        private const val INITIAL_COOLDOWN = 1 * 60
-
+        private const val INITIAL_COOLDOWN = 3 * 60
+        private const val COOLDOWN_KEY = "teleportnearby"
     }
 }

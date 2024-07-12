@@ -22,6 +22,9 @@ commands:
     $start:
       description: Starts the game
       permission: shadow.admin
+    $config:
+      description: Full administrative control over enchants
+      default: shadow.admin
 permissions:
   shadow.admin:
     description: Full administrative control over enchants

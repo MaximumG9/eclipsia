@@ -14,7 +14,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import net.minecraft.world.level.chunk.ChunkStatus
 import net.minecraft.world.level.levelgen.structure.StructureStart
 import org.bukkit.Location
-import org.bukkit.craftbukkit.v1_20_R1.CraftChunk
+import org.bukkit.craftbukkit.v1_20_R3.CraftChunk
 import org.bukkit.entity.Player
 import org.bukkit.generator.structure.StructureType
 import org.bukkit.util.BoundingBox
@@ -24,7 +24,8 @@ import kotlin.math.sin
 const val WORLD_BORDER_SIZE = 62.5
 
 class L1SelectLocation(private val shadow: Shadow) {
-    private fun checkForStronghold(center: Location): Boolean { // checks if there are more than 12 end portal frames in the area
+    private fun checkForStrongholdAndUnfillEyes(center: Location): Boolean { // checks if there are more than 12 end portal frames in the area
+
         val session: EditSession = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(center.world))
 
         val worldBorderBoundingBox = BoundingBox(
@@ -33,47 +34,38 @@ class L1SelectLocation(private val shadow: Shadow) {
             center.z - WORLD_BORDER_SIZE
         )
 
-        var strongholdBoundingBox: BoundingBox? = null
-        if (center.world.locateNearestStructure(center, StructureType.STRONGHOLD, 1000, false) == null) return false
-
         val loc: Location =
-            center.world.locateNearestStructure(center, StructureType.STRONGHOLD, 1000, false)!!.location
+            center.world.locateNearestStructure(center, StructureType.STRONGHOLD, (2*WORLD_BORDER_SIZE/16).toInt(), false)?.location ?: return false
 
         val craftChunk: CraftChunk = center.world.getChunkAt(loc) as CraftChunk
         shadow.logger.info(
             "Chunk: ${
-                craftChunk.getHandle(ChunkStatus.STRUCTURE_REFERENCES).allReferences.keys.first().type().toString()
+                craftChunk.getHandle(ChunkStatus.STRUCTURE_STARTS).allStarts.keys.first().type()
             }"
         )
 
-        val stronghold: StructureStart? =
-            craftChunk.getHandle(ChunkStatus.STRUCTURE_REFERENCES).allStarts.values.firstOrNull { structure ->
+        val strongholdStart: StructureStart? =
+            craftChunk.getHandle(ChunkStatus.STRUCTURE_STARTS).allStarts.values.firstOrNull { structure ->
+                shadow.logger.info("${structure.structure.type()} ?= ${net.minecraft.world.level.levelgen.structure.StructureType.STRONGHOLD}")
                 structure.structure.type()
-                    .equals(StructureType.STRONGHOLD) // @TODO <-- This doesn't work, need to find code that compares correctly
+                    .equals(net.minecraft.world.level.levelgen.structure.StructureType.STRONGHOLD)
             }
 
-        if (stronghold != null) {
-            shadow.logger.info("Stronghold found at: ${stronghold.boundingBox}")
-            shadow.boundingBoxSet.add(
-                BoundingBox(
-                    stronghold.boundingBox.minX().toDouble(),
-                    stronghold.boundingBox.minY().toDouble(),
-                    stronghold.boundingBox.minZ().toDouble(),
-                    stronghold.boundingBox.maxX().toDouble(),
-                    stronghold.boundingBox.maxY().toDouble(),
-                    stronghold.boundingBox.maxZ().toDouble()
-                )
-            )
+        if(strongholdStart == null) {
+            shadow.logger.severe("Could not refind stronghold")
+            return false
         }
 
-        for (bb in shadow.boundingBoxSet) {
-            if (worldBorderBoundingBox.overlaps(bb)) {
-                strongholdBoundingBox = bb
-                break
-            }
-        }
+        var strongholdBoundingBox = BoundingBox(
+            strongholdStart.boundingBox.minX().toDouble(),
+            strongholdStart.boundingBox.minY().toDouble(),
+            strongholdStart.boundingBox.minZ().toDouble(),
+            strongholdStart.boundingBox.maxX().toDouble(),
+            strongholdStart.boundingBox.maxY().toDouble(),
+            strongholdStart.boundingBox.maxZ().toDouble()
+        )
 
-        if (strongholdBoundingBox == null) return false
+        shadow.strongholdBoundingBox = strongholdBoundingBox
 
         strongholdBoundingBox = worldBorderBoundingBox.intersection(strongholdBoundingBox)
 
@@ -82,10 +74,23 @@ class L1SelectLocation(private val shadow: Shadow) {
             BlockVector3.at(strongholdBoundingBox.maxX, strongholdBoundingBox.maxY, strongholdBoundingBox.maxZ)
         )
 
-        return session.countBlocks(
+        val portalCount = session.countBlocks(
             region,
-            BlockTypes.END_PORTAL_FRAME!!.allStates.map { it.toBaseBlock() }.toSet()
-        ) >= 12
+            BlockTypeMask(session,BlockTypes.END_PORTAL_FRAME)
+        )
+
+        // replaces all portal frames with the same frame without an eye in it
+        val eyeState = HashMap<String, String>()
+        eyeState["eye"] = "false"
+        session.replaceBlocks(
+            region,
+            BlockTypeMask(session, BlockTypes.END_PORTAL_FRAME),
+            StateApplyingPattern(session, eyeState)
+        )
+
+        session.close()
+
+        return portalCount >= 12
     }
 
     fun selectLocation(location: Location) {
@@ -100,7 +105,7 @@ class L1SelectLocation(private val shadow: Shadow) {
             )
         }
 
-        if (!checkForStronghold(location)) {
+        if (!checkForStrongholdAndUnfillEyes(location)) {
             shadow.server.broadcast(
                 MiniMessage.miniMessage().deserialize(
                     "<red>Failed to start game. No portal room within area.</red>"
@@ -109,39 +114,6 @@ class L1SelectLocation(private val shadow: Shadow) {
             shadow.gameState.currentPhase = GamePhase.IN_BETWEEN_ROUND
             return
         }
-
-        val session: EditSession = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(overworld))
-
-        val worldBorderBoundingBox = BoundingBox(
-            location.x + WORLD_BORDER_SIZE, -64.0,
-            location.z + WORLD_BORDER_SIZE, location.x - WORLD_BORDER_SIZE, 315.0,
-            location.z - WORLD_BORDER_SIZE
-        )
-
-        var strongholdBoundingBox: BoundingBox? = null
-
-        for (bb in shadow.boundingBoxSet) {
-            if (worldBorderBoundingBox.overlaps(bb)) {
-                strongholdBoundingBox = bb
-                break
-            }
-        }
-
-        strongholdBoundingBox = worldBorderBoundingBox.intersection(strongholdBoundingBox!!)
-
-        val region = CuboidRegion(
-            BlockVector3.at(strongholdBoundingBox.minX, strongholdBoundingBox.minY, strongholdBoundingBox.minZ),
-            BlockVector3.at(strongholdBoundingBox.maxX, strongholdBoundingBox.maxY, strongholdBoundingBox.maxZ)
-        )
-
-        val eyeState = HashMap<String, String>()
-        eyeState["eye"] = "false"
-        session.replaceBlocks(
-            region,
-            BlockTypeMask(session, BlockTypes.END_PORTAL_FRAME),
-            StateApplyingPattern(session, eyeState)
-        )
-        session.close()
 
         overworld!!.worldBorder.center = location
         overworld.worldBorder.size = WORLD_BORDER_SIZE * 2

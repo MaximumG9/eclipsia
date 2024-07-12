@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm") version "1.9.21"
     id("com.github.johnrengelman.shadow") version "7.0.0"
-    id("io.papermc.paperweight.userdev") version "1.5.5"
+    id("io.papermc.paperweight.userdev") version "1.7.1"
     application
 }
 
@@ -22,13 +22,14 @@ repositories {
 }
 
 dependencies {
-    paperweight.paperDevBundle("1.20.1-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.20.4-R0.1-SNAPSHOT")
     testImplementation(kotlin("test"))
     implementation(kotlin("stdlib"))
-    compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
-    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.8.4")
-    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.8.4")
-    compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
+    compileOnly("com.comphenix.protocol:ProtocolLib:5.2.0-SNAPSHOT")
+
+    compileOnly("com.sk89q.worldedit:worldedit-core:7.2.0-SNAPSHOT")
+    compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.9") { isTransitive = false }
+    implementation(kotlin("reflect"))
 }
 
 tasks.test {
@@ -48,8 +49,9 @@ application {
 
 tasks {
     assemble {
-        dependsOn(reobfJar)
+        // dependsOn(reobfJar)
         dependsOn("shadowJar")
+        dependsOn(reobfJar)
     }
 
     build {
@@ -57,9 +59,12 @@ tasks {
 
     shadowJar {
         archiveClassifier.set("")
-        destinationDirectory.set(layout.buildDirectory.dir("C:/Users/Osmii/Downloads"))
-        // destinationDirectory.set(layout.buildDirectory.dir("C:/Users/Gamer/Desktop/Paper 1.20.1/plugins"))
+        // destinationDirectory.set(layout.buildDirectory.dir("C:/Users/Osmii/Downloads"))
     }
     jar {
+    }
+
+    reobfJar {
+        this.outputJar.set(layout.buildDirectory.file("C:/Users/Gamer/Desktop/Paper 1.20.4/plugins/Shadow-1.2.jar"))
     }
 }
