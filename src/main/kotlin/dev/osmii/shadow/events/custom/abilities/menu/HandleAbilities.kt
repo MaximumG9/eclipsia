@@ -1,10 +1,10 @@
 package dev.osmii.shadow.events.custom.abilities.menu
 
 import dev.osmii.shadow.Shadow
+import dev.osmii.shadow.config.AbilityTestConfig
 import dev.osmii.shadow.enums.CID
 import dev.osmii.shadow.enums.PlayableRole
 import dev.osmii.shadow.game.abilities.Ability
-import dev.osmii.shadow.game.abilities.shadow.KillOneNearby
 import dev.osmii.shadow.game.abilities.shadow.ToggleStrength
 import dev.osmii.shadow.util.ItemUtil
 import net.kyori.adventure.text.Component
@@ -60,7 +60,7 @@ class HandleAbilities(val shadow: Shadow) : Listener {
         val abilityList: MutableList<Ability> = ArrayList()
         if (shadow.gameState.currentRoles[e.player.uniqueId] == PlayableRole.SHADOW) {
             abilityList.add(ToggleStrength())
-            abilityList.add(KillOneNearby())
+            abilityList.add(AbilityTestConfig.getShadowSecondAbility())
         }
         createAbilityGUI(shadow, e.player, abilityList)
     }
