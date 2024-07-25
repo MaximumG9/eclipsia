@@ -13,6 +13,8 @@ import org.bukkit.inventory.ItemStack
 class TeleportRandomPlayer : Ability {
     override val item: ItemStack = ItemStack(Material.WATER_BUCKET)
 
+    private lateinit var cooldown: Cooldown
+
     init {
         item.itemMeta = item.itemMeta.apply {
             this.lore(
@@ -26,13 +28,14 @@ class TeleportRandomPlayer : Ability {
     }
 
     override fun apply(player: Player, shadow: Shadow) {
-        val cooldown =
-            TimeUtil.checkCooldown(shadow, COOLDOWN, INITIAL_COOLDOWN, COOLDOWN_KEY, player.uniqueId.toString())
-        if (cooldown > 0) {
-            shadow.logger.info("Cooldown: $cooldown")
+        if(!this::cooldown.isInitialized) cooldown = shadow.cooldownManager.getCooldown(this::class)
+
+        val cooldownLeft = cooldown.checkCooldown(player)
+        if (cooldownLeft > 0) {
+            shadow.logger.info("Cooldown: $cooldownLeft")
             player.sendMessage(
                 MiniMessage.miniMessage()
-                    .deserialize("<red>This ability is on cooldown for</red> <blue>${TimeUtil.secondsToText(cooldown)}</blue><red>.</red>")
+                    .deserialize("<red>This ability is on cooldown for</red> <blue>${TimeUtil.secondsToText(cooldownLeft)}</blue><red>.</red>")
             )
             return
         }
@@ -56,7 +59,7 @@ class TeleportRandomPlayer : Ability {
             val target = targets.random()
 
             val teleportPosition = target.world.getHighestBlockAt(target.location).location
-            target.teleport(teleportPosition.add(0.0,30.0,0.0))
+            target.teleport(teleportPosition.add(0.0, HEIGHT_ABOVE_GROUND,0.0))
 
             target.location.world.strikeLightningEffect(target.location)
             player.sendMessage(
@@ -65,7 +68,7 @@ class TeleportRandomPlayer : Ability {
                 )
             )
 
-            TimeUtil.setCooldown(shadow, COOLDOWN_KEY, player.uniqueId.toString())
+            cooldown.resetCooldown(player)
         } else {
             player.sendMessage(MiniMessage.miniMessage().deserialize("<red>No nearby players to teleport.</red>"))
         }
@@ -73,8 +76,6 @@ class TeleportRandomPlayer : Ability {
     }
 
     companion object {
-        private const val COOLDOWN = 7 * 60
-        private const val INITIAL_COOLDOWN = 3 * 60
-        private const val COOLDOWN_KEY = "teleportnearby"
+        var HEIGHT_ABOVE_GROUND = 30.0
     }
 }

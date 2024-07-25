@@ -9,13 +9,12 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import java.util.HashMap
 
 
 class ScalingDamageAll : Ability {
     override val item: ItemStack = ItemStack(Material.NETHERITE_SWORD)
 
-
+    private lateinit var cooldown: Cooldown
 
     init {
         item.itemMeta = item.itemMeta.apply {
@@ -30,18 +29,30 @@ class ScalingDamageAll : Ability {
     }
 
     override fun apply(player: Player, shadow: Shadow) {
-        val cooldown =
-            TimeUtil.checkCooldown(shadow, COOLDOWN, INITIAL_COOLDOWN, COOLDOWN_KEY, player.uniqueId.toString())
-        if (cooldown > 0) {
-            shadow.logger.info("Cooldown: $cooldown")
+        if(!this::cooldown.isInitialized) cooldown = shadow.cooldownManager.getCooldown(this::class)
+
+        val cooldownLeft = cooldown.checkCooldown(player)
+        if (cooldownLeft > 0) {
+            shadow.logger.info("Cooldown: $cooldownLeft")
             player.sendMessage(
                 MiniMessage.miniMessage()
-                    .deserialize("<red>This ability is on cooldown for</red> <blue>${TimeUtil.secondsToText(cooldown)}</blue><red>.</red>")
+                    .deserialize("<red>This ability is on cooldown for</red> <blue>${TimeUtil.secondsToText(cooldownLeft)}</blue><red>.</red>")
             )
             return
         }
 
-        var targets = player.world.getNearbyPlayers(player.location, 18.0)
+        val players = player.world.getNearbyPlayers(player.location, 18.0)
+
+        var shadows = players.filter {
+            (shadow.gameState.participationStatus[it.uniqueId] == true) &&
+                    (shadow.gameState.currentRoles.getOrDefault(
+                        it.uniqueId,
+                        PlayableRole.SPECTATOR
+                    ).roleFaction == PlayableFaction.SHADOW)
+        }
+
+        var targets = players
+
         targets.remove(player)
         targets = targets.filter {
             (shadow.gameState.participationStatus[it.uniqueId] == true) &&
@@ -56,15 +67,18 @@ class ScalingDamageAll : Ability {
 
         }
 
-        val damage = playerCountToDamageMap[targets.size]!!
+        val damage = if(targets.size < playerCountToDamageList.size) {
+            playerCountToDamageList[targets.size]
+        } else {
+            playerCountToDamageList.last()
+        }
+
 
         if (targets.isNotEmpty()) {
             targets.forEach {
-                it.health = 0.0
+                it.damage(damage)
                 it.sendHealthUpdate()
                 it.location.world.strikeLightningEffect(it.location)
-
-                it.damage(damage)
 
                 player.sendMessage(
                     MiniMessage.miniMessage().deserialize(
@@ -73,8 +87,15 @@ class ScalingDamageAll : Ability {
                 )
             }
 
+            shadows.forEach { // Fake damaging the shadows
+                it.world.strikeLightningEffect(player.location)
+                it.damage(0.1)
+                it.sendHealthUpdate()
+            }
 
-            TimeUtil.setCooldown(shadow, COOLDOWN_KEY, player.uniqueId.toString())
+
+
+            cooldown.resetCooldown(player)
         } else {
             player.sendMessage(MiniMessage.miniMessage().deserialize("<red>No nearby players to kill.</red>"))
         }
@@ -82,18 +103,15 @@ class ScalingDamageAll : Ability {
     }
 
     companion object {
-        private const val COOLDOWN = 7 * 60
-        private const val INITIAL_COOLDOWN = 3 * 60
-        private const val COOLDOWN_KEY = "scalingDamageKill"
-        private val playerCountToDamageMap = HashMap<Int,Double>()
+        private val playerCountToDamageList = ArrayList<Double>()
 
         init {
-            playerCountToDamageMap[0] = 0.0
-            playerCountToDamageMap[1] = 1.0
-            playerCountToDamageMap[2] = 2.0
-            playerCountToDamageMap[3] = 8.0
-            playerCountToDamageMap[4] = 18.0
-            playerCountToDamageMap[5] = 19.0
+            playerCountToDamageList.add(0.0)
+            playerCountToDamageList.add(1.0)
+            playerCountToDamageList.add(2.0)
+            playerCountToDamageList.add(8.0)
+            playerCountToDamageList.add(18.0)
+            playerCountToDamageList.add(19.0)
         }
     }
 }

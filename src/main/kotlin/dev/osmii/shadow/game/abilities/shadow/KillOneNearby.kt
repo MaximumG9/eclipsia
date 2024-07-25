@@ -13,6 +13,8 @@ import org.bukkit.inventory.ItemStack
 class KillOneNearby : Ability {
     override val item: ItemStack = ItemStack(Material.NETHERITE_SWORD)
 
+    private lateinit var cooldown: Cooldown
+
     init {
         item.itemMeta = item.itemMeta.apply {
             this.lore(
@@ -26,13 +28,14 @@ class KillOneNearby : Ability {
     }
 
     override fun apply(player: Player, shadow: Shadow) {
-        val cooldown =
-            TimeUtil.checkCooldown(shadow, COOLDOWN, INITIAL_COOLDOWN, COOLDOWN_KEY, player.uniqueId.toString())
-        if (cooldown > 0) {
-            shadow.logger.info("Cooldown: $cooldown")
+        if(!this::cooldown.isInitialized) cooldown = shadow.cooldownManager.getCooldown(this::class)
+
+        val cooldownLeft = cooldown.checkCooldown(player)
+        if (cooldownLeft > 0) {
+            shadow.logger.info("Cooldown: $cooldownLeft")
             player.sendMessage(
                 MiniMessage.miniMessage()
-                    .deserialize("<red>This ability is on cooldown for</red> <blue>${TimeUtil.secondsToText(cooldown)}</blue><red>.</red>")
+                    .deserialize("<red>This ability is on cooldown for</red> <blue>${TimeUtil.secondsToText(cooldownLeft)}</blue><red>.</red>")
             )
             return
         }
@@ -63,16 +66,11 @@ class KillOneNearby : Ability {
                 )
             )
 
-            TimeUtil.setCooldown(shadow, COOLDOWN_KEY, player.uniqueId.toString())
+            cooldown.resetCooldown(player)
         } else {
             player.sendMessage(MiniMessage.miniMessage().deserialize("<red>No nearby players to kill.</red>"))
         }
 
-    }
 
-    companion object {
-        private const val COOLDOWN = 7 * 60
-        private const val INITIAL_COOLDOWN = 3 * 60
-        private const val COOLDOWN_KEY = "singlekillnearby"
     }
 }

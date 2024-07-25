@@ -21,12 +21,12 @@ import org.bukkit.inventory.ItemStack
 import kotlin.math.floor
 
 class HandleAbilities(val shadow: Shadow) : Listener {
-    var inventories: MutableList<Inventory> = ArrayList()
+    private var inventories: MutableList<Inventory> = ArrayList()
 
-    var abilityHashMap: HashMap<ItemStack, Ability> = HashMap()
+    private var abilityHashMap: HashMap<ItemStack, Ability> = HashMap()
 
     private fun registerAbility(ability: Ability) {
-        abilityHashMap.put(ability.item, ability)
+        abilityHashMap[ability.item] = ability
     }
 
     private fun createAbilityGUI(shadow: Shadow, player: Player, abilities: List<Ability>) {

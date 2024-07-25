@@ -15,12 +15,14 @@ import org.bukkit.inventory.ItemStack
 class SpawnTntRandomPlayer : Ability {
     override val item: ItemStack = ItemStack(Material.TNT)
 
+    private lateinit var cooldown: Cooldown
+
     init {
         item.itemMeta = item.itemMeta.apply {
             this.lore(
                 listOf(
                     MiniMessage.miniMessage()
-                        .deserialize("<!i><gray>Spawn tnt on a random player within</gray> <blue>18</blue> <gray>blocks. That explodes within ${TICKS_TO_EXPLODE/20.0}</!i></gray>")
+                        .deserialize("<!i><gray>Spawn tnt on a random player within</gray> <blue>18</blue> <gray>blocks. That explodes within ${TICKS_TO_EXPLODE/20.0}</!i>")
                 )
             )
             this.displayName(MiniMessage.miniMessage().deserialize("<!i><red>NUKE</red></!i>"))
@@ -28,13 +30,14 @@ class SpawnTntRandomPlayer : Ability {
     }
 
     override fun apply(player: Player, shadow: Shadow) {
-        val cooldown =
-            TimeUtil.checkCooldown(shadow, COOLDOWN, INITIAL_COOLDOWN, COOLDOWN_KEY, player.uniqueId.toString())
-        if (cooldown > 0) {
-            shadow.logger.info("Cooldown: $cooldown")
+        if(!this::cooldown.isInitialized) cooldown = shadow.cooldownManager.getCooldown(this::class)
+
+        val cooldownLeft = cooldown.checkCooldown(player)
+        if (cooldownLeft > 0) {
+            shadow.logger.info("Cooldown: $cooldownLeft")
             player.sendMessage(
                 MiniMessage.miniMessage()
-                    .deserialize("<red>This ability is on cooldown for</red> <blue>${TimeUtil.secondsToText(cooldown)}</blue><red>.</red>")
+                    .deserialize("<red>This ability is on cooldown for</red> <blue>${TimeUtil.secondsToText(cooldownLeft)}</blue><red>.</red>")
             )
             return
         }
@@ -43,10 +46,6 @@ class SpawnTntRandomPlayer : Ability {
         targets.remove(player)
         targets = targets.filter {
             (shadow.gameState.participationStatus[it.uniqueId] == true) &&
-                    (shadow.gameState.currentRoles.getOrDefault(
-                        it.uniqueId,
-                        PlayableRole.SPECTATOR
-                    ).roleFaction != PlayableFaction.SHADOW) &&
                     shadow.gameState.currentRoles.getOrDefault(
                         it.uniqueId,
                         PlayableRole.SPECTATOR.roleFaction
@@ -70,6 +69,8 @@ class SpawnTntRandomPlayer : Ability {
                 )
             )
 
+            shadow.spawnedTNTs.add(tnt.uniqueId)
+
             TimeUtil.setCooldown(shadow, COOLDOWN_KEY, player.uniqueId.toString())
         } else {
             player.sendMessage(MiniMessage.miniMessage().deserialize("<red>No nearby players to summon TNT on.</red>"))
@@ -78,8 +79,6 @@ class SpawnTntRandomPlayer : Ability {
     }
 
     companion object {
-        private const val COOLDOWN = 7 * 60
-        private const val INITIAL_COOLDOWN = 3 * 60
         var TICKS_TO_EXPLODE = 30
         private const val COOLDOWN_KEY = "spawntnt"
     }
