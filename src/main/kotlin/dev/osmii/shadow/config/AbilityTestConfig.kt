@@ -10,7 +10,16 @@ object AbilityTestConfig {
         this.ability = testAbility
     }
 
+    fun getAbility() : ShadowTestAbilities {
+        return ability
+    }
+
     fun getShadowSecondAbility() : Ability {
         return ability.constructor.call()
+    }
+
+    fun getRandomValue() : Ability {
+        val value = ShadowTestAbilities.entries.random()
+        return value.constructor.call()
     }
 }

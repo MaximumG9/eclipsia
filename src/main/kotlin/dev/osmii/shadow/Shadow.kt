@@ -14,6 +14,7 @@ import dev.osmii.shadow.events.game.*
 import dev.osmii.shadow.game.abilities.shadow.CooldownManager
 import dev.osmii.shadow.game.abilities.shadow.PoisonCloud
 import org.bukkit.Bukkit
+import org.bukkit.craftbukkit.v1_20_R3.CraftServer
 import org.bukkit.entity.Entity
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
@@ -63,8 +64,9 @@ class Shadow : JavaPlugin() {
         getCommand("\$location")!!.setExecutor(CommandLocation(this))
         getCommand("\$start")!!.setExecutor(CommandStart(this))
         getCommand("\$cancel")!!.setExecutor(CommandCancel(this))
-        getCommand("\$config")!!.setExecutor(CommandConfig(this))
         getCommand("shadowchat")!!.setExecutor(CommandShadowChat(this))
+
+        CommandConfig(this).register((this.server as CraftServer).server.commands.dispatcher)
 
         // Create player team
         var team = Bukkit.getScoreboardManager().mainScoreboard.getTeam("players")
