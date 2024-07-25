@@ -64,29 +64,35 @@ class HandleDayNight(val shadow: Shadow) {
                             if (alreadyUpdated) return@inner
 
                             val container = shadow.protocolManager?.createPacket(PacketType.Play.Server.ENTITY_METADATA)
+
                             if (container == null) {
                                 shadow.logger.warning("ProtocolLib failure: container is null")
                                 return@inner
                             }
 
-                            val watcher = WrappedDataWatcher()
+                            val watcher = WrappedDataWatcher(other)
                             val serializer: WrappedDataWatcher.Serializer? =
                                 WrappedDataWatcher.Registry.get(java.lang.Byte::class.java)
-                            watcher.entity = other
+
+                            val glowingBit : Byte? = 0b01000000.toByte() // nullable since nullable Byte is mapped to boxed byte in java
+
                             watcher.setObject(
                                 0,
                                 serializer,
-                                0x40.toByte(),
+                                glowingBit,
                                 true
                             )
+
                             container.integers.write(0, other.entityId) // The entity ID
                             container.watchableCollectionModifier.write(0, watcher.watchableObjects) // The data watcher
+
                             try {
                                 shadow.protocolManager!!.sendServerPacket(p, container)
                             } catch (e: Exception) {
                                 shadow.logger.warning("ProtocolLib failure: ${e.message}")
                                 e.printStackTrace()
                             }
+
                             glowingUpdatedFor.add(Pair(other.entityId, p.entityId))
                         }
                     }
