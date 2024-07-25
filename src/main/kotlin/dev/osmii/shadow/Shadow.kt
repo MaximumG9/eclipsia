@@ -7,12 +7,16 @@ import dev.osmii.shadow.events.HandleItemInteractionRestrict
 import dev.osmii.shadow.events.custom.HandleAddRole
 import dev.osmii.shadow.events.custom.HandleDayNight
 import dev.osmii.shadow.events.custom.HandleParticipationToggle
+import dev.osmii.shadow.events.custom.abilities.HandleAbilityTNTExplosion
 import dev.osmii.shadow.events.custom.abilities.item.sheriff.HandleSheriffBow
 import dev.osmii.shadow.events.custom.abilities.menu.HandleAbilities
 import dev.osmii.shadow.events.game.*
+import dev.osmii.shadow.game.abilities.shadow.CooldownManager
+import dev.osmii.shadow.game.abilities.shadow.PoisonCloud
 import org.bukkit.Bukkit
 import org.bukkit.entity.Entity
 import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scoreboard.Team
 import org.bukkit.util.BoundingBox
 import java.util.*
@@ -20,10 +24,13 @@ import java.util.logging.Logger
 import kotlin.collections.HashMap
 
 class Shadow : JavaPlugin() {
-    var gameState: ShadowGameState = ShadowGameState()
+    val gameState: ShadowGameState = ShadowGameState()
     var protocolManager: ProtocolManager? = null
     var strongholdBoundingBox: BoundingBox? = null
-    var eyes: HashMap<UUID, Entity> = HashMap()
+    val eyes: HashMap<UUID, Entity> = HashMap()
+    val poisonClouds = ArrayList<PoisonCloud>()
+    val spawnedTNTs = ArrayList<UUID>()
+    val cooldownManager = CooldownManager(this)
 
     override fun onEnable() {
         protocolManager = ProtocolLibrary.getProtocolManager()
@@ -47,6 +54,8 @@ class Shadow : JavaPlugin() {
         Bukkit.getPluginManager().registerEvents(HandleAbilities(this), this)
         Bukkit.getPluginManager().registerEvents(HandleEyePickup(this), this)
 
+        Bukkit.getPluginManager().registerEvents(HandleAbilityTNTExplosion(this), this)
+
         protocolManager!!.addPacketListener(PacketHideItemSwitch(this))
 
         // Register commands
@@ -64,6 +73,13 @@ class Shadow : JavaPlugin() {
         }
 
         team.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER)
+
+        val poisonCloudTickerTask = object : BukkitRunnable() {
+            override fun run() {
+                poisonClouds.forEach(PoisonCloud::tick)
+            }
+        }
+        poisonCloudTickerTask.runTaskTimer(this, 0, 1)
     }
 
     companion object {

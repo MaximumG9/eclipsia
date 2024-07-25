@@ -1,70 +1,105 @@
 package dev.osmii.shadow.game.abilities.shadow
 
 import dev.osmii.shadow.Shadow
-import dev.osmii.shadow.enums.Namespace
-import dev.osmii.shadow.game.abilities.Ability
-import dev.osmii.shadow.util.ItemUtil
-import net.kyori.adventure.text.minimessage.MiniMessage
-import org.bukkit.Material
-import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemFlag
-import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.PotionMeta
-import org.bukkit.persistence.PersistentDataType
+import dev.osmii.shadow.enums.PlayableFaction
+import dev.osmii.shadow.enums.PlayableRole
+import org.bukkit.Color
+import org.bukkit.Location
+import org.bukkit.Particle
+import org.bukkit.Server
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
+import kotlin.random.Random
 
-class PoisonCloud : Ability {
-    override val item: ItemStack = ItemStack(Material.POTION)
-
-    init {
-        item.itemMeta = (item.itemMeta as PotionMeta).apply {
-            this.displayName(MiniMessage.miniMessage().deserialize("<!i><red>Poison Burst</red></!i>"))
-            this.lore(
-                listOf(
-                    MiniMessage.miniMessage()
-                        .deserialize("<!i><gray>Create a cloud of</gray> <blue>Poison!?</blue> <gray>.</gray></!i>")
-                )
-            )
-            this.addItemFlags(ItemFlag.HIDE_ITEM_SPECIFICS, ItemFlag.HIDE_ATTRIBUTES)
-            this.addCustomEffect(
-                PotionEffect(
-                    PotionEffectType.POISON,
-                    0,
-                    0,
-                    false,
-                    false,
-                    true
-                ), true
-            )
-            this.persistentDataContainer.set(
-                Namespace.FORBIDDEN,
-                PersistentDataType.BYTE_ARRAY,
-                ItemUtil.forbidden(drop = true, use = false, move = false, moveContainer = false)
-            )
+class PoisonCloud(val shadow : Shadow, val location: Location) {
+    private var ticksLeft = SummonPoisonCloud.LIFETIME
+    fun tick() {
+        if(ticksLeft <= 0) {
+            shadow.poisonClouds.remove(this)
         }
-    }
+        shadow.server.onlinePlayers.stream().forEach {
+            if(it.world == location.world) {
 
+                // Give Poison Effect
+                if(it.location.distanceSquared(location) < SummonPoisonCloud.RADIUS*SummonPoisonCloud.RADIUS) {
+                    val potentionalPoisonEffect =  it.getPotionEffect(PotionEffectType.POISON)
 
-    override fun apply(player: Player, shadow: Shadow) {
-        if (!strength.containsKey(player)) strength[player] = false
-        strength[player] = !strength[player]!!
+                    if( !(potentionalPoisonEffect != null &&
+                        potentionalPoisonEffect.duration + 20 > SummonPoisonCloud.POISON_DURATION &&
+                        potentionalPoisonEffect.amplifier >= SummonPoisonCloud.POISON_AMPLIFIER
+                                )) {
+                        it.addPotionEffect(
+                            PotionEffect(
+                                PotionEffectType.POISON,
+                                SummonPoisonCloud.POISON_DURATION,
+                                SummonPoisonCloud.POISON_AMPLIFIER,
+                                false,
+                                true,
+                                true
+                            )
+                        )
+                    }
 
-        player.sendMessage(
-            MiniMessage.miniMessage()
-                .deserialize("<red>Toggled strength</red> <blue>${if (strength[player]!!) "on" else "off"}</blue><red>.</red>")
-        )
-        if (strength[player]!!) player.addPotionEffect(
-            PotionEffect(
-                PotionEffectType.INCREASE_DAMAGE, -1, 0,
-                false, false, true
-            )
-        )
-        else player.removePotionEffect(PotionEffectType.INCREASE_DAMAGE)
+                    if(shadow.gameState.currentRoles.getOrDefault(
+                            it.uniqueId,
+                            PlayableRole.SPECTATOR.roleFaction
+                        ) == PlayableFaction.SHADOW) { // If is a shadow
 
+                        val potentionalRegenEffect = it.getPotionEffect(PotionEffectType.REGENERATION)
+
+                        if( !(potentionalRegenEffect != null &&
+                            potentionalRegenEffect.duration + 20 > SummonPoisonCloud.POISON_DURATION &&
+                            potentionalRegenEffect.amplifier >= SummonPoisonCloud.POISON_AMPLIFIER + 1
+                        )) {
+                            it.addPotionEffect(
+                                PotionEffect(
+                                    PotionEffectType.REGENERATION,
+                                    SummonPoisonCloud.POISON_DURATION,
+                                    SummonPoisonCloud.POISON_AMPLIFIER + 1,
+                                    true,
+                                    false,
+                                    true
+                                )
+                            )
+                        }
+                    }
+
+                }
+
+                // Spawn Particles
+                if(it.location.distanceSquared(location) < SummonPoisonCloud.CLOUD_VIEW_DISTANCE * SummonPoisonCloud.CLOUD_VIEW_DISTANCE) {
+                    val particle: Particle = Particle.SPELL_MOB
+
+                    for(i in 0..SummonPoisonCloud.PARTICLES_PER_TICK) {
+
+                        val pitch = Random.nextDouble() * TAU
+                        val yaw = Random.nextDouble() * TAU
+
+                        val magnitude = adjust(Random.nextDouble()) * SummonPoisonCloud.RADIUS
+
+                        val x = cos(pitch) * sin(yaw) * magnitude
+                        val z = cos(yaw) * cos(pitch) * magnitude
+                        val y = sin(pitch) * magnitude
+
+                        val particleLoc = Location(it.world,x,y,z).add(location)
+
+                        it.spawnParticle(particle,particleLoc,1)
+                    }
+                }
+            }
+        }
+        ticksLeft--
     }
 
     companion object {
-        val strength = mutableMapOf<Player, Boolean>()
+
+        const val TAU = Math.PI*2
+
+        fun adjust(x : Double) : Double {
+            return sqrt(x)
+        }
     }
 }
