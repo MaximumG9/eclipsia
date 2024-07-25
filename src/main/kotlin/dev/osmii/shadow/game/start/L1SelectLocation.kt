@@ -18,6 +18,7 @@ import org.bukkit.craftbukkit.v1_20_R3.CraftChunk
 import org.bukkit.entity.Player
 import org.bukkit.generator.structure.StructureType
 import org.bukkit.util.BoundingBox
+import java.lang.IllegalArgumentException
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -67,7 +68,12 @@ class L1SelectLocation(private val shadow: Shadow) {
 
         shadow.strongholdBoundingBox = strongholdBoundingBox
 
-        strongholdBoundingBox = worldBorderBoundingBox.intersection(strongholdBoundingBox)
+        try {
+            strongholdBoundingBox = worldBorderBoundingBox.intersection(strongholdBoundingBox)
+        } catch (e : IllegalArgumentException) {
+
+        }
+
 
         val region = CuboidRegion(
             BlockVector3.at(strongholdBoundingBox.minX, strongholdBoundingBox.minY, strongholdBoundingBox.minZ),
@@ -105,6 +111,9 @@ class L1SelectLocation(private val shadow: Shadow) {
             )
         }
 
+        overworld!!.worldBorder.center = location
+        overworld.worldBorder.size = WORLD_BORDER_SIZE * 2
+
         if (!checkForStrongholdAndUnfillEyes(location)) {
             shadow.server.broadcast(
                 MiniMessage.miniMessage().deserialize(
@@ -115,8 +124,6 @@ class L1SelectLocation(private val shadow: Shadow) {
             return
         }
 
-        overworld!!.worldBorder.center = location
-        overworld.worldBorder.size = WORLD_BORDER_SIZE * 2
         overworld.setSpawnLocation(location)
 
         val netherLocation = Location(nether, location.x / 8, 0.0, location.z / 8)
