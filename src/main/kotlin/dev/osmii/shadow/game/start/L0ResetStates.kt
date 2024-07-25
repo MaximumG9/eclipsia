@@ -6,10 +6,13 @@ import org.bukkit.advancement.AdvancementProgress
 
 class L0ResetStates(private val shadow: Shadow) {
     fun resetStates() {
-        shadow.server.getWorld("world")?.time = 0
-        shadow.server.getWorld("world")?.fullTime = 0
-        shadow.server.getWorld("world")?.setStorm(false)
-        shadow.server.getWorld("world")?.isThundering = false
+        val overworld = shadow.server.worlds[0]
+
+        overworld.time = 0
+        overworld.fullTime = 0
+        overworld.setStorm(false)
+        overworld.isThundering = false
+
         shadow.server.onlinePlayers.forEach { player ->
             // Reset player data
             player.gameMode = GameMode.ADVENTURE
