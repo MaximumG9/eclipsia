@@ -8,6 +8,6 @@ import org.bukkit.event.entity.EntityPickupItemEvent
 class HandleEyePickup(private val shadow: Shadow) : Listener {
     @EventHandler
     fun playerItemPickup(e : EntityPickupItemEvent) {
-        shadow.eyes[e.item.uniqueId]!!.remove()
+        shadow.eyes[e.item.uniqueId]?.remove()
     }
 }
