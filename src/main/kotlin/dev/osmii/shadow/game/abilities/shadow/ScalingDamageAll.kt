@@ -43,7 +43,7 @@ class ScalingDamageAll : Ability {
 
         val players = player.world.getNearbyPlayers(player.location, 18.0)
 
-        var shadows = players.filter {
+        val shadows = players.filter {
             (shadow.gameState.participationStatus[it.uniqueId] == true) &&
                     (shadow.gameState.currentRoles.getOrDefault(
                         it.uniqueId,

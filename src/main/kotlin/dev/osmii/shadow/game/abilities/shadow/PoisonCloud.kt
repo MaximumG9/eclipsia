@@ -3,10 +3,8 @@ package dev.osmii.shadow.game.abilities.shadow
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.PlayableFaction
 import dev.osmii.shadow.enums.PlayableRole
-import org.bukkit.Color
 import org.bukkit.Location
 import org.bukkit.Particle
-import org.bukkit.Server
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import kotlin.math.cos
