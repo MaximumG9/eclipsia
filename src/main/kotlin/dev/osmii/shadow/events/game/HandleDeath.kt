@@ -74,7 +74,7 @@ class HandleDeath(private val shadow: Shadow) : Listener {
         Bukkit.getScheduler().runTaskLater(shadow, Runnable {
             val p = e.player
             if (shadow.gameState.currentRoles[p.uniqueId] == PlayableRole.SPECTATOR) {
-                e.respawnLocation = shadow.server.worlds[0].spawnLocation
+                e.respawnLocation = shadow.overworld.spawnLocation
                 p.gameMode = GameMode.SPECTATOR
                 p.gameMode
             }

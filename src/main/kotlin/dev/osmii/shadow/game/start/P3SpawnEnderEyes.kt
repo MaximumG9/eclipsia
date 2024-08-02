@@ -29,7 +29,7 @@ const val ENDER_EYE_NETHER_ROOF_COUNT = 12
 
 class P3SpawnEnderEyes(private val shadow: Shadow) {
     fun spawnEnderEyes() {
-        val overworld = shadow.server.worlds[0]
+        val overworld = shadow.overworld
         val nether = shadow.server.worlds[1]
 
         // Spawn Overworld Surface Ender Eyes

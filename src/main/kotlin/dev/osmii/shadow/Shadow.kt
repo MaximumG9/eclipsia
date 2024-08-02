@@ -15,6 +15,7 @@ import dev.osmii.shadow.events.game.*
 import dev.osmii.shadow.game.abilities.shadow.CooldownManager
 import dev.osmii.shadow.game.abilities.shadow.PoisonCloud
 import org.bukkit.Bukkit
+import org.bukkit.World
 import org.bukkit.craftbukkit.v1_20_R3.CraftServer
 import org.bukkit.entity.Entity
 import org.bukkit.plugin.java.JavaPlugin
@@ -27,12 +28,15 @@ import kotlin.collections.HashMap
 
 class Shadow : JavaPlugin() {
     val gameState: ShadowGameState = ShadowGameState()
-    var protocolManager: ProtocolManager? = null
+    private var protocolManager: ProtocolManager? = null
     var strongholdBoundingBox: BoundingBox? = null
     val eyes: HashMap<UUID, Entity> = HashMap()
     val poisonClouds = ArrayList<PoisonCloud>()
     val spawnedTNTs = ArrayList<UUID>()
     val cooldownManager = CooldownManager(this)
+
+    val overworld: World
+        get() = this.server.worlds[0]
 
     override fun onEnable() {
         protocolManager = ProtocolLibrary.getProtocolManager()

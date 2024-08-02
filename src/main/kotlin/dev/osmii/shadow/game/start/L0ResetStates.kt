@@ -6,7 +6,7 @@ import org.bukkit.advancement.AdvancementProgress
 
 class L0ResetStates(private val shadow: Shadow) {
     fun resetStates() {
-        val overworld = shadow.server.worlds[0]
+        val overworld = shadow.overworld
 
         overworld.time = 0
         overworld.fullTime = 0

@@ -28,7 +28,7 @@ class HandleDayNight(val shadow: Shadow) {
     val glowingUpdatedFor: ArrayList<Pair<Int, Int>> = ArrayList()
 
     fun register() {
-        val world: World? = shadow.server.worlds[0]
+        val world: World? = shadow.overworld
         Bukkit.getScheduler().runTaskTimer(shadow, Runnable {
             if (shadow.gameState.currentPhase != GamePhase.GAME_IN_PROGRESS) return@Runnable
 

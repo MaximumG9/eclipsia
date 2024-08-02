@@ -100,7 +100,7 @@ class L1SelectLocation(private val shadow: Shadow) {
     }
 
     fun selectLocation(location: Location) {
-        val overworld = shadow.server.worlds[0]
+        val overworld = shadow.overworld
         val nether = shadow.server.worlds[1]
 
         if (location.world != overworld) {
@@ -111,7 +111,7 @@ class L1SelectLocation(private val shadow: Shadow) {
             )
         }
 
-        overworld!!.worldBorder.center = location
+        overworld.worldBorder.center = location
         overworld.worldBorder.size = WORLD_BORDER_SIZE * 2
 
         if (!checkForStrongholdAndUnfillEyes(location)) {
