@@ -48,8 +48,8 @@ class SpawnTntRandomPlayer : Ability {
             (shadow.gameState.participationStatus[it.uniqueId] == true) &&
                     shadow.gameState.currentRoles.getOrDefault(
                         it.uniqueId,
-                        PlayableRole.SPECTATOR.roleFaction
-                    ) != PlayableFaction.SPECTATOR
+                        PlayableRole.SPECTATOR
+                    ).roleFaction != PlayableFaction.SPECTATOR
 
         }
 

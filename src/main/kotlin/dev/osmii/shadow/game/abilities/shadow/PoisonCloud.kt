@@ -41,24 +41,21 @@ class PoisonCloud(val shadow : Shadow, val location: Location) {
                         )
                     }
 
-                    if(shadow.gameState.currentRoles.getOrDefault(
-                            it.uniqueId,
-                            PlayableRole.SPECTATOR.roleFaction
-                        ) == PlayableFaction.SHADOW) { // If is a shadow
+                    if(shadow.gameState.currentRoles[it.uniqueId]?.roleFaction == PlayableFaction.SHADOW) { // If is a shadow
 
                         val potentionalRegenEffect = it.getPotionEffect(PotionEffectType.REGENERATION)
 
-                        if( !(potentionalRegenEffect != null &&
-                            potentionalRegenEffect.duration + 20 > SummonPoisonCloud.POISON_DURATION &&
-                            potentionalRegenEffect.amplifier >= SummonPoisonCloud.POISON_AMPLIFIER + 1
-                        )) {
+                        if( potentionalRegenEffect == null ||
+                            (potentionalRegenEffect.duration + 20 < SummonPoisonCloud.POISON_DURATION &&
+                            potentionalRegenEffect.amplifier <= SummonPoisonCloud.POISON_AMPLIFIER + 1)
+                        ) {
                             it.addPotionEffect(
                                 PotionEffect(
                                     PotionEffectType.REGENERATION,
                                     SummonPoisonCloud.POISON_DURATION,
                                     SummonPoisonCloud.POISON_AMPLIFIER + 1,
-                                    true,
                                     false,
+                                    true,
                                     true
                                 )
                             )

@@ -7,6 +7,7 @@ import dev.osmii.shadow.events.HandleItemInteractionRestrict
 import dev.osmii.shadow.events.custom.HandleAddRole
 import dev.osmii.shadow.events.custom.HandleDayNight
 import dev.osmii.shadow.events.custom.HandleParticipationToggle
+import dev.osmii.shadow.events.custom.PacketKeepGlowing
 import dev.osmii.shadow.events.custom.abilities.HandleAbilityTNTExplosion
 import dev.osmii.shadow.events.custom.abilities.item.sheriff.HandleSheriffBow
 import dev.osmii.shadow.events.custom.abilities.menu.HandleAbilities
@@ -58,6 +59,7 @@ class Shadow : JavaPlugin() {
         Bukkit.getPluginManager().registerEvents(HandleAbilityTNTExplosion(this), this)
 
         protocolManager!!.addPacketListener(PacketHideItemSwitch(this))
+        protocolManager!!.addPacketListener(PacketKeepGlowing(this))
 
         // Register commands
         getCommand("\$roles")!!.setExecutor(CommandRoles(this))

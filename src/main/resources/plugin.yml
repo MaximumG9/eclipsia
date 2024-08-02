@@ -4,7 +4,7 @@ main: dev.osmii.shadow.Shadow
 name: 'Shadow'
 description: 'Plugin for the game Shadow'
 version: '1.2.1'
-author: 'Osmii'
+author: 'Osmii & MaximumG9'
 
 commands:
     shadowchat:

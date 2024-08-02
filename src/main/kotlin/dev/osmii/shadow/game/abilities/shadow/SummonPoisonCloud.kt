@@ -59,7 +59,7 @@ class SummonPoisonCloud : Ability {
             shadow.logger.info("Cooldown: $cooldownLeft")
             player.sendMessage(
                 MiniMessage.miniMessage()
-                    .deserialize("<red>This ability is on cooldown for</red> <blue>${TimeUtil.secondsToText(cooldownLeft)}</blue><red>.</red>")
+                    .deserialize("<red>This ability is on cooldown for</red> <blue>${TimeUtil.secondsToText(cooldownLeft/20)}</blue><red>.</red>")
             )
             return
         }
@@ -70,8 +70,8 @@ class SummonPoisonCloud : Ability {
             (shadow.gameState.participationStatus[it.uniqueId] == true) &&
                     shadow.gameState.currentRoles.getOrDefault(
                         it.uniqueId,
-                        PlayableRole.SPECTATOR.roleFaction
-                    ) != PlayableFaction.SPECTATOR // Make sure it can spawn on all non spectators with equal chance to give no info
+                        PlayableRole.SPECTATOR
+                    ).roleFaction != PlayableFaction.SPECTATOR // Make sure it can spawn on all non spectators with equal chance to give no info
         }
 
         if (targets.isNotEmpty()) {

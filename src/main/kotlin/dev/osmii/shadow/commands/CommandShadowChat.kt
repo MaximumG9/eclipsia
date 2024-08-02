@@ -2,6 +2,7 @@ package dev.osmii.shadow.commands
 
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.GamePhase
+import dev.osmii.shadow.enums.PlayableFaction
 import dev.osmii.shadow.enums.PlayableRole
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.command.Command
@@ -19,7 +20,7 @@ class CommandShadowChat(val shadow: Shadow) : CommandExecutor {
             )
             return false
         }
-        if (shadow.gameState.currentRoles[player.uniqueId] != PlayableRole.SHADOW) {
+        if (shadow.gameState.currentRoles[player.uniqueId]?.roleFaction != PlayableFaction.SHADOW) {
             player.sendMessage(
                 MiniMessage.miniMessage().deserialize("<red>You must be a shadow to use this command.</red>")
             )
@@ -28,7 +29,7 @@ class CommandShadowChat(val shadow: Shadow) : CommandExecutor {
 
         val message = args.joinToString(" ")
         shadow.server.onlinePlayers.forEach { p ->
-            if (shadow.gameState.currentRoles[p.uniqueId] == PlayableRole.SHADOW) {
+            if (shadow.gameState.currentRoles[p.uniqueId]?.roleFaction == PlayableFaction.SHADOW) {
                 p.sendMessage(
                     MiniMessage.miniMessage()
                         .deserialize("<red>[Shadow Chat] </red><white>${player.name} » </white><gray>$message</gray>")

@@ -50,8 +50,8 @@ class TeleportRandomPlayer : Ability {
                     ).roleFaction != PlayableFaction.SHADOW) &&
                     shadow.gameState.currentRoles.getOrDefault(
                         it.uniqueId,
-                        PlayableRole.SPECTATOR.roleFaction
-                    ) != PlayableFaction.SPECTATOR
+                        PlayableRole.SPECTATOR
+                    ).roleFaction != PlayableFaction.SPECTATOR
 
         }
 
