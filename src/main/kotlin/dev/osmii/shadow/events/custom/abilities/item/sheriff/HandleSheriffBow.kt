@@ -3,6 +3,7 @@ package dev.osmii.shadow.events.custom.abilities.item.sheriff
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.CID
 import dev.osmii.shadow.util.ItemUtil
+import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
@@ -10,6 +11,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityShootBowEvent
+import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.inventory.ItemStack
 
 class HandleSheriffBow(val shadow: Shadow) : Listener {
@@ -26,6 +28,17 @@ class HandleSheriffBow(val shadow: Shadow) : Listener {
         e.projectile.isGlowing = true
         sheriffArrows[e.projectile.entityId] = e.bow!!
         sheriffs[e.projectile.entityId] = e.entity as Player
+    }
+
+    @EventHandler
+    fun preOnHit(e: ProjectileHitEvent) {
+        if(e.entity.type != EntityType.ARROW) return;
+        if (e.entity.entityId !in sheriffArrows.keys) return
+        if (sheriffs[e.entity.entityId] == null || sheriffs[e.entity.entityId]?.isOnline == false) return
+        val entity = e.hitEntity
+        if(entity is Player && entity.isBlocking && entity.activeItem.type == Material.SHIELD) {
+            entity.setCooldown(Material.SHIELD,100);
+        }
     }
 
     @EventHandler
@@ -50,6 +63,7 @@ class HandleSheriffBow(val shadow: Shadow) : Listener {
             1.0f,
             1.0f
         )
+
         bow?.amount = 0
     }
 }
