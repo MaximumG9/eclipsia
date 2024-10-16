@@ -137,8 +137,31 @@ class P3SpawnEnderEyes(private val shadow: Shadow) {
         val possiblePositions = ArrayList<Vector3>()
 
         val iter: Iterator<Change> = session.changeSet.backwardIterator()
+        var posGetter : ((Change) -> Vector3)? = null
+
         while (iter.hasNext()) {
-            possiblePositions.add((iter.next() as BlockChange).position.toVector3())
+            val change = iter.next();
+            if(posGetter == null) {
+                if(change is BlockChange) {
+                    posGetter = posGet@{ changed : Change ->
+                        return@posGet (changed as BlockChange).position.toVector3()
+                    }
+                } else { // We're using FAWE and this is a MutableBlockChange
+                    posGetter = posGet@{ changed : Change ->
+                        val xField = changed.javaClass.getDeclaredField("x")
+                        val yField = changed.javaClass.getDeclaredField("y")
+                        val zField = changed.javaClass.getDeclaredField("z")
+
+                        val x = xField.getInt(changed)
+                        val y = yField.getInt(changed)
+                        val z = zField.getInt(changed)
+
+                        return@posGet Vector3.at(x.toDouble(),y.toDouble(),z.toDouble())
+                    }
+
+                }
+            }
+            possiblePositions.add(posGetter.invoke(change));
         }
 
         if (possiblePositions.size > ENDER_EYE_STRONGHOLD_COUNT) {
