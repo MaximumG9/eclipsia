@@ -104,6 +104,10 @@ class GameEnd(val shadow: Shadow) {
         }
 
         shadow.server.onlinePlayers.forEach { p ->
+            p.clearActivePotionEffects();
+        }
+
+        shadow.server.onlinePlayers.forEach { p ->
             p.sendMessage(
                 Component.text("Game winners: ")
                     .color(NamedTextColor.BLUE)

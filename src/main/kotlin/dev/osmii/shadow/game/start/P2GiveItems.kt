@@ -66,6 +66,10 @@ class P2GiveItems(private val shadow: Shadow) {
             player.inventory.setItem(8, abilitySelector)
         }
 
+        shadow.server.onlinePlayers.forEach { p ->
+            p.addPotionEffect(PotionEffect(PotionEffectType.FAST_DIGGING,-1,1,false,false))
+        }
+
         P3SpawnEnderEyes(shadow).spawnEnderEyes()
     }
 }
