@@ -62,6 +62,11 @@ class P2GiveItems(private val shadow: Shadow) {
                     PersistentDataType.STRING,
                     CID.HOTBAR_ABILITY_SELECT
                 )
+                this.persistentDataContainer.set(
+                    Namespace.INVISIBLE,
+                    PersistentDataType.BOOLEAN,
+                    true
+                )
             }
             player.inventory.setItem(8, abilitySelector)
         }

@@ -26,9 +26,8 @@ class PacketHideItemSwitch(val shadow: Shadow) : PacketAdapter(
 
         if (itemSlot != EnumWrappers.ItemSlot.MAINHAND) return
 
-        item.itemMeta?.persistentDataContainer?.get(Namespace.CUSTOM_ID, PersistentDataType.STRING)?.let {
-            shadow.logger.info("Found custom id $it")
-            if (it == CID.HOTBAR_ABILITY_SELECT) {
+        item.itemMeta?.persistentDataContainer?.get(Namespace.INVISIBLE, PersistentDataType.BOOLEAN)?.let {
+            if (it) {
                 e.isCancelled = true
             }
         }
