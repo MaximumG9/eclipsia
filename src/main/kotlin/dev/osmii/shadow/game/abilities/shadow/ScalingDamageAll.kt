@@ -107,10 +107,9 @@ class ScalingDamageAll : Ability {
 
         init {
             playerCountToDamageList.add(0.0)
-            playerCountToDamageList.add(1.0)
             playerCountToDamageList.add(2.0)
-            playerCountToDamageList.add(8.0)
-            playerCountToDamageList.add(18.0)
+            playerCountToDamageList.add(6.0)
+            playerCountToDamageList.add(12.0)
             playerCountToDamageList.add(19.0)
         }
     }
