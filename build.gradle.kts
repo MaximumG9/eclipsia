@@ -25,7 +25,7 @@ dependencies {
     paperweight.paperDevBundle("1.20.4-R0.1-SNAPSHOT")
     testImplementation(kotlin("test"))
     implementation(kotlin("stdlib"))
-    compileOnly("com.comphenix.protocol:ProtocolLib:5.2.0-SNAPSHOT")
+    compileOnly("com.comphenix.protocol:ProtocolLib:5.3.0")
 
     compileOnly("com.sk89q.worldedit:worldedit-core:7.2.0-SNAPSHOT")
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.9") { isTransitive = false }
