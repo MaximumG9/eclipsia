@@ -3,6 +3,7 @@ package dev.osmii.shadow.events.custom
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.GamePhase
 import dev.osmii.shadow.enums.PlayableFaction
+import dev.osmii.shadow.game.abilities.shadow.ToggleStrength
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Bukkit
@@ -54,8 +55,10 @@ class HandleDayNight(val shadow: Shadow) {
                         p.addPotionEffect(PotionEffect(PotionEffectType.DARKNESS, 40, 0, false, false))
                     }
                     if (shadow.gameState.currentRoles[p.uniqueId]!!.roleFaction == PlayableFaction.SHADOW) {
-                        p.addPotionEffect(PotionEffect(PotionEffectType.SPEED, 40, 1, false, false))
-                        p.addPotionEffect(PotionEffect(PotionEffectType.FAST_DIGGING, 40, 4, false, false))
+                        if(ToggleStrength.strength[p] == true) {
+                            p.addPotionEffect(PotionEffect(PotionEffectType.SPEED, 40, 1, false, false))
+                            p.addPotionEffect(PotionEffect(PotionEffectType.FAST_DIGGING, 40, 4, false, false))
+                        }
                     }
                 }
             } else {
