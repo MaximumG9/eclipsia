@@ -118,14 +118,14 @@ class P1AssignRoles(private val shadow: Shadow) {
             }, 100)
 
             // /shadowchat tip
-            if (role == PlayableRole.SHADOW) {
+            if (role.roleFaction == PlayableFaction.SHADOW) {
                 player.sendMessage(
                     Component.text("The shadows are: ")
                         .color(NamedTextColor.RED)
                         .append(
                             Component.join(
                                 JoinConfiguration.separator(Component.text(", ").color(NamedTextColor.RED)),
-                                shadow.gameState.currentRoles.filter { (_, role) -> role == PlayableRole.SHADOW }.keys.map {
+                                shadow.gameState.currentRoles.filter { (_, role) -> role.roleFaction == PlayableFaction.SHADOW }.keys.map {
                                     Component.text(shadow.server.getPlayer(it)?.name!!).color(NamedTextColor.GOLD)
                                 }
                             )
