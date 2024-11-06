@@ -1,5 +1,6 @@
 package dev.osmii.shadow.game.rolelist
 
+import com.mojang.datafixers.util.Either
 import dev.osmii.shadow.enums.PlayableFaction
 import dev.osmii.shadow.enums.PlayableRole
 import org.bukkit.Bukkit
@@ -17,7 +18,7 @@ class Rolelist {
         return roles
     }
 
-    fun pickRoles(): ArrayList<PlayableRole> {
+    fun pickRoles(): Either<ArrayList<PlayableRole>,RolelistInvalidReason> {
         val roleList = ArrayList<PlayableRole>()
         var failReason: RolelistInvalidReason? = null
         Bukkit.getLogger().info(getSelectors().toString())
@@ -28,6 +29,8 @@ class Rolelist {
         this.roles.forEach { selector ->
             selector.copyToMutableRoles()
         }
+
+        failReason = checkValidity().let { return@let if(it.first) null else it.second }
 
         for (sel in this.roles) {
             Bukkit.getLogger().info("1: ${sel.roles}")
@@ -42,13 +45,14 @@ class Rolelist {
                 continue
             }
         }
+        if(failReason != null) return Either.right(failReason)
 
         pickedRoles = roleList
-        return roleList
+        return Either.left(roleList)
     }
 
     fun checkValidity(): Pair<Boolean, RolelistInvalidReason> {
-        if (roles.size < 4) return Pair(false, RolelistInvalidReason.NOT_ENOUGH_ROLES)
+        if (roles.size < 1) return Pair(false, RolelistInvalidReason.NOT_ENOUGH_ROLES) // don't worry, this is mostly for testing purposes, could be upped later
         if (roles.size > 15) return Pair(false, RolelistInvalidReason.TOO_MANY_ROLES)
 
         var hasVillage = 0

@@ -44,7 +44,13 @@ class P1AssignRoles(private val shadow: Shadow) {
         }
 
         // Assign roles
-        shadow.gameState.originalRolelist.pickRoles()
+        shadow.gameState.originalRolelist.pickRoles().ifRight { problem ->
+            shadow.server.broadcast(
+                MiniMessage.miniMessage().deserialize(
+                    "<red>Failed to start game. Role list is invalid because there is ${problem.name}</gold>"
+                )
+            )
+        }
         shadow.gameState.originalRolelist.pickedRoles.shuffle()
         players.shuffle()
         for (i in 0..<shadow.gameState.originalRolelist.roles.size) {
