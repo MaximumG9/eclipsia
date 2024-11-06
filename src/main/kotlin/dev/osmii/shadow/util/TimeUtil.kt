@@ -3,10 +3,15 @@ package dev.osmii.shadow.util
 import dev.osmii.shadow.Shadow
 import org.bukkit.Bukkit
 import java.time.Duration
+import kotlin.math.ceil
 
 object TimeUtil {
     fun ticks(ticks: Int): Duration {
         return Duration.ofMillis(ticks.toLong() * 50)
+    }
+
+    fun ticksToText(ticks: Int): String {
+        return secondsToText(ceil(ticks/20.0).toInt())
     }
 
     fun secondsToText(seconds: Int): String {
