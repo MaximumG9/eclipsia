@@ -10,6 +10,7 @@ import dev.osmii.shadow.events.custom.HandleParticipationToggle
 import dev.osmii.shadow.events.custom.PacketKeepGlowing
 import dev.osmii.shadow.events.custom.abilities.HandleAbilityTNTExplosion
 import dev.osmii.shadow.events.custom.abilities.item.sheriff.HandleSheriffBow
+import dev.osmii.shadow.events.custom.abilities.item.trident.HandleTrident
 import dev.osmii.shadow.events.custom.abilities.menu.HandleAbilities
 import dev.osmii.shadow.events.game.*
 import dev.osmii.shadow.game.abilities.shadow.CooldownManager
@@ -54,6 +55,7 @@ class Shadow : JavaPlugin() {
         Bukkit.getPluginManager().registerEvents(HandleMoveRestrict(this), this)
 
         Bukkit.getPluginManager().registerEvents(HandleSheriffBow(this), this)
+        Bukkit.getPluginManager().registerEvents(HandleTrident(this), this)
 
         Bukkit.getPluginManager().registerEvents(HandleParticipationToggle(this), this)
         Bukkit.getPluginManager().registerEvents(HandleAddRole(this), this)

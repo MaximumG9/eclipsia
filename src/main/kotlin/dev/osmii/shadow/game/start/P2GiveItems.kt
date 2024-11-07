@@ -48,6 +48,37 @@ class P2GiveItems(private val shadow: Shadow) {
                 player.inventory.setItem(9, bow)
             }
 
+            if (role == PlayableRole.TRIDENT) {
+                val trident = ItemStack(Material.TRIDENT, 1)
+                trident.itemMeta = trident.itemMeta.apply {
+                    this.displayName(MiniMessage.miniMessage().deserialize("<!i><blue>Poseidon's Trident</blue></!i>"))
+                    this.isUnbreakable = true
+                    this.addEnchant(Enchantment.LOYALTY, 3, true)
+                    this.lore(listOf(
+                        MiniMessage.miniMessage().deserialize("<!i>Breaks shields on hit</!i>"),
+                        MiniMessage.miniMessage().deserialize("<!i>Invisible to non-shadows</!i>"),
+                        MiniMessage.miniMessage().deserialize("<!i><blue>Ruthlessness is mercy upon ourselves</blue></!i>")
+                    ))
+                    this.persistentDataContainer.set(
+                        Namespace.FORBIDDEN,
+                        PersistentDataType.BYTE_ARRAY,
+                        ItemUtil.forbidden(drop = true, use = false, move = false, moveContainer = true)
+                    )
+                    this.persistentDataContainer.set(
+                        Namespace.CUSTOM_ID,
+                        PersistentDataType.STRING,
+                        CID.TRIDENT
+                    )
+                    this.persistentDataContainer.set(
+                        Namespace.INVISIBLE,
+                        PersistentDataType.BOOLEAN,
+                        true
+                    )
+                }
+                player.inventory.setItem(7, trident)
+                player.setCooldown(Material.TRIDENT,5 * 60 * 20)
+            }
+
             val abilitySelector = ItemStack(Material.NETHER_STAR, 1)
             abilitySelector.itemMeta = abilitySelector.itemMeta.apply {
                 if (this == null) return@apply
