@@ -31,7 +31,7 @@ class Rolelist {
             selector.copyToMutableRoles()
         }
 
-        failReason = checkValidity().let { return@let if(it.first) null else it.second }
+
 
         for (sel in this.roles) {
             Shadow.logger?.info("1: ${sel.roles}")
@@ -46,9 +46,13 @@ class Rolelist {
                 continue
             }
         }
-        if(failReason != null) return Either.right(failReason)
 
         pickedRoles = roleList
+
+        failReason = checkValidity().let { return@let if(it.first) null else it.second }
+
+        if(failReason != null) return Either.right(failReason)
+
         return Either.left(roleList)
     }
 

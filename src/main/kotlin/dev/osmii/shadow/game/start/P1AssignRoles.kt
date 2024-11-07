@@ -47,7 +47,7 @@ class P1AssignRoles(private val shadow: Shadow) {
         shadow.gameState.originalRolelist.pickRoles().ifRight { problem ->
             shadow.server.broadcast(
                 MiniMessage.miniMessage().deserialize(
-                    "<red>Failed to start game. Role list is invalid because there is ${problem.name}</gold>"
+                    "<red>Failed to start game. Role list is invalid because there is</red> <gold>${problem.name}</gold>"
                 )
             )
         }
