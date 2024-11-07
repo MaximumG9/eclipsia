@@ -1,6 +1,7 @@
 package dev.osmii.shadow.game.rolelist
 
 import com.mojang.datafixers.util.Either
+import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.PlayableFaction
 import dev.osmii.shadow.enums.PlayableRole
 import org.bukkit.Bukkit
@@ -21,7 +22,7 @@ class Rolelist {
     fun pickRoles(): Either<ArrayList<PlayableRole>,RolelistInvalidReason> {
         val roleList = ArrayList<PlayableRole>()
         var failReason: RolelistInvalidReason?
-        Bukkit.getLogger().info(getSelectors().toString())
+        Shadow.logger?.info(getSelectors().toString())
 
         this.roles.sortBy { it.specificity }
         this.roles.reverse()
@@ -33,13 +34,13 @@ class Rolelist {
         failReason = checkValidity().let { return@let if(it.first) null else it.second }
 
         for (sel in this.roles) {
-            Bukkit.getLogger().info("1: ${sel.roles}")
+            Shadow.logger?.info("1: ${sel.roles}")
             val role = sel.mutableRoles.random()
             roleList.add(role)
             if (sel.mutableRoles.size == 0) failReason = RolelistInvalidReason.UNIQUE_CONFLICT
             if (role.isUnique) {
                 this.roles.forEach { selector2 ->
-                    Bukkit.getLogger().info("2: ${selector2.roles}")
+                    Shadow.logger?.info("2: ${selector2.roles}")
                     selector2.mutableRoles.remove(role)
                 }
                 continue
