@@ -32,12 +32,12 @@ class HandleSheriffBow(val shadow: Shadow) : Listener {
 
     @EventHandler
     fun preOnHit(e: ProjectileHitEvent) {
-        if(e.entity.type != EntityType.ARROW) return;
+        if(e.entity.type != EntityType.ARROW) return
         if (e.entity.entityId !in sheriffArrows.keys) return
         if (sheriffs[e.entity.entityId] == null || sheriffs[e.entity.entityId]?.isOnline == false) return
         val entity = e.hitEntity
         if(entity is Player && entity.isBlocking && entity.activeItem.type == Material.SHIELD) {
-            entity.setCooldown(Material.SHIELD,100);
+            entity.setCooldown(Material.SHIELD,100)
         }
     }
 

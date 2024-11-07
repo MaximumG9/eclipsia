@@ -1,6 +1,5 @@
 package dev.osmii.shadow.events
 
-import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.Namespace
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
@@ -16,7 +15,7 @@ import org.bukkit.event.player.PlayerSwapHandItemsEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 
-class HandleItemInteractionRestrict(private val shadow: Shadow) : Listener {
+class HandleItemInteractionRestrict : Listener {
     // Blocks item dropping, moving, and using for items with the forbidden tag
     @EventHandler
     fun onForbiddenItemDrop(e: PlayerDropItemEvent) {
@@ -184,20 +183,20 @@ class HandleItemInteractionRestrict(private val shadow: Shadow) : Listener {
 
     @EventHandler
     fun onForbiddenItemOffhand(e: PlayerSwapHandItemsEvent) {
-        if (!(e.mainHandItem!!.itemMeta?.persistentDataContainer?.has(
+        if (!(e.mainHandItem.itemMeta?.persistentDataContainer?.has(
                 Namespace.FORBIDDEN,
                 PersistentDataType.BYTE_ARRAY
-            ) == true || (e.offHandItem!!.itemMeta?.persistentDataContainer?.has(
+            ) == true || (e.offHandItem.itemMeta?.persistentDataContainer?.has(
                 Namespace.FORBIDDEN,
                 PersistentDataType.BYTE_ARRAY
             ) == true))
         ) return
 
         val forbiddenMainHand =
-            e.mainHandItem!!.itemMeta?.persistentDataContainer?.get(Namespace.FORBIDDEN, PersistentDataType.BYTE_ARRAY)
+            e.mainHandItem.itemMeta?.persistentDataContainer?.get(Namespace.FORBIDDEN, PersistentDataType.BYTE_ARRAY)
 
         val forbiddenOffHand =
-            e.offHandItem!!.itemMeta?.persistentDataContainer?.get(Namespace.FORBIDDEN, PersistentDataType.BYTE_ARRAY)
+            e.offHandItem.itemMeta?.persistentDataContainer?.get(Namespace.FORBIDDEN, PersistentDataType.BYTE_ARRAY)
 
         if (forbiddenMainHand?.get(3) == 1.toByte() || forbiddenOffHand?.get(3) == 1.toByte()) {
             e.isCancelled = true

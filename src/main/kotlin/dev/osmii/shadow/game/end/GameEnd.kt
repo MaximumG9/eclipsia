@@ -104,7 +104,7 @@ class GameEnd(val shadow: Shadow) {
         }
 
         shadow.server.onlinePlayers.forEach { p ->
-            p.clearActivePotionEffects();
+            p.clearActivePotionEffects()
         }
 
         shadow.server.onlinePlayers.forEach { p ->

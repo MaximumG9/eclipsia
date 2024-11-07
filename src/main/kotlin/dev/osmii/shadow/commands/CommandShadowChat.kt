@@ -3,7 +3,6 @@ package dev.osmii.shadow.commands
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.GamePhase
 import dev.osmii.shadow.enums.PlayableFaction
-import dev.osmii.shadow.enums.PlayableRole
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor

@@ -6,7 +6,6 @@ import com.comphenix.protocol.events.PacketAdapter
 import com.comphenix.protocol.events.PacketEvent
 import com.comphenix.protocol.wrappers.EnumWrappers
 import dev.osmii.shadow.Shadow
-import dev.osmii.shadow.enums.CID
 import dev.osmii.shadow.enums.Namespace
 import org.bukkit.persistence.PersistentDataType
 

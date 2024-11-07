@@ -1,6 +1,5 @@
 package dev.osmii.shadow.events.game
 
-import com.mojang.logging.LogUtils
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.GamePhase
 import dev.osmii.shadow.enums.PlayableFaction

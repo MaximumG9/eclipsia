@@ -48,7 +48,7 @@ class Shadow : JavaPlugin() {
         // Register events
         HandleDayNight(this).register()
 
-        Bukkit.getPluginManager().registerEvents(HandleItemInteractionRestrict(this), this)
+        Bukkit.getPluginManager().registerEvents(HandleItemInteractionRestrict(), this)
         Bukkit.getPluginManager().registerEvents(HandleChat(this), this)
         Bukkit.getPluginManager().registerEvents(HandleDeath(this), this)
         Bukkit.getPluginManager().registerEvents(HandleJoinLeave(this), this)

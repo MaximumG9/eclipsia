@@ -8,7 +8,6 @@ import com.comphenix.protocol.events.ScheduledPacket
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.PlayableFaction
 import net.kyori.adventure.text.Component
-import kotlin.experimental.and
 import kotlin.experimental.or
 
 class PacketKeepGlowing(val shadow: Shadow) : PacketAdapter(

@@ -2,7 +2,6 @@ package dev.osmii.shadow.game.abilities.shadow
 
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.PlayableFaction
-import dev.osmii.shadow.enums.PlayableRole
 import org.bukkit.Location
 import org.bukkit.Particle
 import org.bukkit.potion.PotionEffect

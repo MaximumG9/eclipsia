@@ -20,7 +20,7 @@ class Rolelist {
 
     fun pickRoles(): Either<ArrayList<PlayableRole>,RolelistInvalidReason> {
         val roleList = ArrayList<PlayableRole>()
-        var failReason: RolelistInvalidReason? = null
+        var failReason: RolelistInvalidReason?
         Bukkit.getLogger().info(getSelectors().toString())
 
         this.roles.sortBy { it.specificity }
@@ -51,7 +51,7 @@ class Rolelist {
         return Either.left(roleList)
     }
 
-    fun checkValidity(): Pair<Boolean, RolelistInvalidReason> {
+    private fun checkValidity(): Pair<Boolean, RolelistInvalidReason> {
         if (roles.size < 1) return Pair(false, RolelistInvalidReason.NOT_ENOUGH_ROLES) // don't worry, this is mostly for testing purposes, could be upped later
         if (roles.size > 15) return Pair(false, RolelistInvalidReason.TOO_MANY_ROLES)
 

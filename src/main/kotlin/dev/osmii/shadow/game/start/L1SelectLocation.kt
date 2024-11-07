@@ -70,7 +70,7 @@ class L1SelectLocation(private val shadow: Shadow) {
 
         try {
             strongholdBoundingBox = worldBorderBoundingBox.intersection(strongholdBoundingBox)
-        } catch (e : IllegalArgumentException) {
+        } catch (_: IllegalArgumentException) {
 
         }
 

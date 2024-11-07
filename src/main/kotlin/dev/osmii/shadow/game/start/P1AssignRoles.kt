@@ -17,7 +17,7 @@ import java.util.*
 
 class P1AssignRoles(private val shadow: Shadow) {
     fun assignRoles() {
-        var players = ArrayList<Player>(shadow.server.onlinePlayers)
+        var players = ArrayList(shadow.server.onlinePlayers)
         players = players.filter {
             shadow.gameState.participationStatus.getOrDefault(
                 it.uniqueId,

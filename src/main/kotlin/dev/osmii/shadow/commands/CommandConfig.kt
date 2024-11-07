@@ -2,14 +2,12 @@ package dev.osmii.shadow.commands
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.LiteralMessage
-import com.mojang.brigadier.Message
 import com.mojang.brigadier.arguments.DoubleArgumentType.doubleArg
 import com.mojang.brigadier.arguments.DoubleArgumentType.getDouble
 import com.mojang.brigadier.arguments.IntegerArgumentType.getInteger
 import com.mojang.brigadier.arguments.IntegerArgumentType.integer
 import com.mojang.brigadier.arguments.StringArgumentType.string
 import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.exceptions.CommandSyntaxException
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
@@ -19,12 +17,10 @@ import dev.osmii.shadow.enums.ShadowTestAbilities
 import dev.osmii.shadow.game.abilities.shadow.SpawnTntRandomPlayer
 import dev.osmii.shadow.game.abilities.shadow.SummonPoisonCloud
 import dev.osmii.shadow.game.abilities.shadow.TeleportRandomPlayer
-import net.kyori.adventure.text.minimessage.MiniMessage
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands.argument
 import net.minecraft.commands.Commands.literal
 import net.minecraft.network.chat.Component
-import org.bukkit.command.Command
 import java.util.concurrent.CompletableFuture
 
 class CommandConfig(val shadow: Shadow) {

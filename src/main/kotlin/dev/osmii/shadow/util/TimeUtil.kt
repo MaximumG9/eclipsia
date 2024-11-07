@@ -1,7 +1,6 @@
 package dev.osmii.shadow.util
 
 import dev.osmii.shadow.Shadow
-import org.bukkit.Bukkit
 import java.time.Duration
 import kotlin.math.ceil
 
@@ -25,25 +24,6 @@ object TimeUtil {
     }
 
     private val cooldownMap = HashMap<String, HashMap<String, Int>>()
-
-    fun checkCooldown(shadow: Shadow, seconds: Int, initial: Int, key: String, uuid: String): Int {
-        if (cooldownMap[key] == null) {
-            cooldownMap[key] = HashMap()
-        }
-        if (cooldownMap[key]!![uuid] == null) {
-            cooldownMap[key]!![uuid] = -1
-        }
-
-        val gameStart = shadow.gameState.startTick
-        if (shadow.server.currentTick - gameStart < initial * 20) {
-            return (initial * 20 - (shadow.server.currentTick - gameStart)) / 20
-        }
-        if (Bukkit.getServer().currentTick - cooldownMap[key]!![uuid]!! < seconds * 20 && cooldownMap[key]!![uuid]!! != -1) {
-            return (seconds * 20 - (shadow.server.currentTick - cooldownMap[key]!![uuid]!!)) / 20
-        }
-
-        return 0
-    }
 
     fun setCooldown(shadow: Shadow, key: String, uuid: String) {
         if (cooldownMap[key] == null) {

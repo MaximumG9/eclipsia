@@ -140,7 +140,7 @@ class P3SpawnEnderEyes(private val shadow: Shadow) {
         var posGetter : ((Change) -> Vector3)? = null
 
         while (iter.hasNext()) {
-            val change = iter.next();
+            val change = iter.next()
             if(posGetter == null) {
                 if(change is BlockChange) {
                     posGetter = posGet@{ changed : Change ->
@@ -161,7 +161,7 @@ class P3SpawnEnderEyes(private val shadow: Shadow) {
 
                 }
             }
-            possiblePositions.add(posGetter.invoke(change));
+            possiblePositions.add(posGetter.invoke(change))
         }
 
         if (possiblePositions.size > ENDER_EYE_STRONGHOLD_COUNT) {

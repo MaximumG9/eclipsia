@@ -11,18 +11,18 @@ import org.bukkit.World
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
-const val nightSpeedMult = 3;
+const val nightSpeedMult = 3
 
 class HandleDayNight(val shadow: Shadow) {
 
-    val glowingUpdatedFor: ArrayList<Pair<Int, Int>> = ArrayList()
+    private val glowingUpdatedFor: ArrayList<Pair<Int, Int>> = ArrayList()
 
     fun register() {
-        val world: World? = shadow.overworld
+        val world: World = shadow.overworld
         Bukkit.getScheduler().runTaskTimer(shadow, Runnable {
             if (shadow.gameState.currentPhase != GamePhase.GAME_IN_PROGRESS) return@Runnable
 
-            if (world?.time in 12452L..12452L + nightSpeedMult) {
+            if (world.time in 12452L..12452L + nightSpeedMult) {
                 glowingUpdatedFor.clear()
                 shadow.server.onlinePlayers.forEach { p ->
                     if (shadow.gameState.currentRoles[p.uniqueId]!!.roleFaction == PlayableFaction.SHADOW) {
@@ -40,14 +40,14 @@ class HandleDayNight(val shadow: Shadow) {
                     }
                 }
             }
-            if (world?.time in 0L..80L) {
+            if (world.time in 0L..80L) {
                 shadow.server.onlinePlayers.forEach { p ->
                     Audience.audience(p).sendActionBar(
                         MiniMessage.miniMessage().deserialize("<green>The sky clears.</green>")
                     )
                 }
             }
-            if (world?.time!! >= 12452L) {
+            if (world.time >= 12452L) {
                 world.time += nightSpeedMult - 1
                 shadow.server.onlinePlayers.forEach { p ->
                     if(p.isGlowing) p.isGlowing = false
