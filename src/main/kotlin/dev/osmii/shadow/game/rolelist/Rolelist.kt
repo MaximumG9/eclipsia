@@ -72,7 +72,7 @@ class Rolelist {
             }
         }
 
-        if (hasVillage + hasEvil + hasNeutral < 2) return Pair(false, RolelistInvalidReason.ONLY_ONE_FACTION)
+        if (hasVillage + hasEvil + hasNeutral < 1) return Pair(false, RolelistInvalidReason.ONLY_ONE_FACTION)
 
         pickedRoles.forEach { role ->
             if (role.isUnique) {

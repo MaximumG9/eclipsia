@@ -13,6 +13,10 @@ class L0ResetStates(private val shadow: Shadow) {
         overworld.setStorm(false)
         overworld.isThundering = false
 
+        shadow.abilityManager.clear()
+
+        shadow.gameState.currentRoleModifiers.clear()
+
         shadow.server.onlinePlayers.forEach { player ->
             // Reset player data
             player.gameMode = GameMode.ADVENTURE

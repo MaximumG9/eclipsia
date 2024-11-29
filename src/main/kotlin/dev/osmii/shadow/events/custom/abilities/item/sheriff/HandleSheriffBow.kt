@@ -38,6 +38,7 @@ class HandleSheriffBow(val shadow: Shadow) : Listener {
         val entity = e.hitEntity
         if(entity is Player && entity.isBlocking && entity.activeItem.type == Material.SHIELD) {
             entity.setCooldown(Material.SHIELD,100)
+            entity.clearActiveItem()
         }
     }
 

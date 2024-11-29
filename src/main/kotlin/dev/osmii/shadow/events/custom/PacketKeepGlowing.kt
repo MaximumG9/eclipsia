@@ -19,7 +19,7 @@ class PacketKeepGlowing(val shadow: Shadow) : PacketAdapter(
         try {
             if (e.packetType != PacketType.Play.Server.ENTITY_METADATA) return
             if (shadow.overworld.time <= 12452L) return
-            if (shadow.gameState.currentRoles[e.player.uniqueId]?.roleFaction != PlayableFaction.SHADOW) return
+            if (!shadow.isRoleFaction(e.player,PlayableFaction.SHADOW)) return
 
             if (!shadow.server.onlinePlayers.any { it.entityId == e.packet.integers.read(0) }) return
 

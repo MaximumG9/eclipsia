@@ -2,6 +2,8 @@ package dev.osmii.shadow.commands
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.LiteralMessage
+import com.mojang.brigadier.arguments.BoolArgumentType.bool
+import com.mojang.brigadier.arguments.BoolArgumentType.getBool
 import com.mojang.brigadier.arguments.DoubleArgumentType.doubleArg
 import com.mojang.brigadier.arguments.DoubleArgumentType.getDouble
 import com.mojang.brigadier.arguments.IntegerArgumentType.getInteger
@@ -14,6 +16,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.config.AbilityTestConfig
 import dev.osmii.shadow.enums.ShadowTestAbilities
+import dev.osmii.shadow.game.abilities.shadow.ScalingDamageAll
 import dev.osmii.shadow.game.abilities.shadow.SpawnTntRandomPlayer
 import dev.osmii.shadow.game.abilities.shadow.SummonPoisonCloud
 import dev.osmii.shadow.game.abilities.shadow.TeleportRandomPlayer
@@ -170,6 +173,22 @@ class CommandConfig(val shadow: Shadow) {
                                         }
                                 )
                         )
+                )
+                .then(
+                    literal("cullNightly")
+                        .then(
+                            argument("newState", bool())
+                                .executes { context ->
+                                    val newState = getBool(context,"newState")
+                                    ScalingDamageAll.toggleScalingDamageAllNightly = newState
+                                    context.source.sendSuccess({Component.literal("Set cullNightly to ${newState}")}, true)
+                                    return@executes if (newState) 1 else 0
+                                }
+                        )
+                        .executes { context ->
+                            context.source.sendSuccess({Component.literal("CullNightly is ${ScalingDamageAll.toggleScalingDamageAllNightly}")}, true)
+                            return@executes if (ScalingDamageAll.toggleScalingDamageAllNightly) 1 else 0
+                        }
                 )
         )
     }

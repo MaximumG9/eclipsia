@@ -1,7 +1,11 @@
 package dev.osmii.shadow.enums
 
+import dev.osmii.shadow.config.AbilityTestConfig
+import dev.osmii.shadow.game.abilities.Ability
+import dev.osmii.shadow.game.abilities.shadow.ToggleStrength
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Material
+import kotlin.reflect.KFunction0
 
 enum class PlayableRole(
     val roleFaction: PlayableFaction,
@@ -11,33 +15,35 @@ enum class PlayableRole(
     val roleDescription: String,
     val roleColor: NamedTextColor,
     val isUnique: Boolean = false,
+    val abilities: List<KFunction0<Ability>>
 ) {
     VILLAGER(PlayableFaction.VILLAGE, PlayableSubfaction.VILLAGE_SUPPORT, Material.EMERALD, "" +
             "Villager", "Work together to beat the game.", NamedTextColor.GREEN,
-        false),
+        false, listOf()
+    ),
     SHERIFF(PlayableFaction.VILLAGE, PlayableSubfaction.VILLAGE_KILLING, Material.BOW,
         "Sheriff", "Use your bow to kill evils.", NamedTextColor.GOLD,
-        false),
+        false, listOf()),
     SHADOW(PlayableFaction.SHADOW, PlayableSubfaction.SHADOW_KILLING, Material.NETHERITE_SWORD,
         "Shadow", "Protect the dragon and kill the villagers.", NamedTextColor.RED,
-        false),
+        false, listOf(AbilityTestConfig::getShadowSecondAbility, ::ToggleStrength)),
 
     LIFEWEAVER(PlayableFaction.VILLAGE, PlayableSubfaction.VILLAGE_PROTECTIVE, Material.GOLDEN_APPLE,
         "Lifeweaver", "Donate your health to others.", NamedTextColor.DARK_AQUA,
-        true),
+        true, listOf()),
     CORONER(PlayableFaction.VILLAGE, PlayableSubfaction.VILLAGE_INVESTIGATIVE, Material.SHEARS,
         "Coroner", "Inspect bodies and uncover death causes.", NamedTextColor.GREEN,
-        true),
+        true, listOf()),
 
     ORACLE(PlayableFaction.SHADOW, PlayableSubfaction.SHADOW_KILLING, Material.ENDER_EYE,
         "Oracle", "Kill others by guessing their role.", NamedTextColor.RED,
-        true),
+        true, listOf()),
     TRIDENT(PlayableFaction.SHADOW, PlayableSubfaction.SHADOW_KILLING, Material.TRIDENT,
         "Poseidon's Wrath", "Use your trident to wipe out the villagers", NamedTextColor.BLUE,
-        true),
+        true, listOf(::ToggleStrength)),
     SPECTATOR(PlayableFaction.SPECTATOR, PlayableSubfaction.SPECTATOR, Material.BARRIER,
         "Spectator", "Spectating.", NamedTextColor.GRAY,
-        false),
+        false, listOf()),
 
 
 }

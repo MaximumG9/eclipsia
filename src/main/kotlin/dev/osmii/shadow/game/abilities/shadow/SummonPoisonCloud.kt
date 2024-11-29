@@ -68,10 +68,7 @@ class SummonPoisonCloud : Ability {
         targets.remove(player)
         targets = targets.filter {
             (shadow.gameState.participationStatus[it.uniqueId] == true) &&
-                    shadow.gameState.currentRoles.getOrDefault(
-                        it.uniqueId,
-                        PlayableRole.SPECTATOR
-                    ).roleFaction != PlayableFaction.SPECTATOR // Make sure it can spawn on all non spectators with equal chance to give no info
+                    !shadow.isRoleFaction(it,PlayableFaction.SPECTATOR)
         }
 
         if (targets.isNotEmpty()) {

@@ -56,6 +56,7 @@ class P2GiveItems(private val shadow: Shadow) {
                     this.addEnchant(Enchantment.LOYALTY, 3, true)
                     this.lore(listOf(
                         MiniMessage.miniMessage().deserialize("<!i>Breaks shields on hit</!i>"),
+                        MiniMessage.miniMessage().deserialize("<!i>Projectile affected by strength</!i>"),
                         MiniMessage.miniMessage().deserialize("<!i>Invisible to non-shadows</!i>"),
                         MiniMessage.miniMessage().deserialize("<!i><blue>Ruthlessness is mercy upon ourselves</blue></!i>")
                     ))

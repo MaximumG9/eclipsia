@@ -41,10 +41,9 @@ class P3SpawnEnderEyes(private val shadow: Shadow) {
             val z = Random.nextInt(
                 (-WORLD_BORDER_SIZE).toInt(), WORLD_BORDER_SIZE.toInt()
             ) + overworld.spawnLocation.z.toInt()
-            val loc = overworld.getHighestBlockAt(x, z).location // World 0 is overworld
+            val loc = overworld.getHighestBlockAt(x, z).location
             loc.add(0.0, 1.0, 0.0)
             createEnderEye(loc)
-            //shadow.logger.info("overworld ender eye spawned at: $loc")
         }
 
 
@@ -81,7 +80,7 @@ class P3SpawnEnderEyes(private val shadow: Shadow) {
             OffsetMask(
                 Masks.negate(ExistingBlockMask(session)), BlockVector3.at(0, 1, 0)
             )
-        ) // FAWE only has support for OffsetMask, not OffsetsMasks
+        ) // FAWE only has support for OffsetMask, not OffsetsMasks (WTF)
         strongholdMask.add(
             OffsetMask(
                 Masks.negate(ExistingBlockMask(session)), BlockVector3.at(0, 2, 0)
@@ -158,7 +157,6 @@ class P3SpawnEnderEyes(private val shadow: Shadow) {
 
                         return@posGet Vector3.at(x.toDouble(),y.toDouble(),z.toDouble())
                     }
-
                 }
             }
             possiblePositions.add(posGetter.invoke(change))
@@ -169,7 +167,6 @@ class P3SpawnEnderEyes(private val shadow: Shadow) {
                 val chosenVector = possiblePositions[Random.nextInt(0, possiblePositions.size - 1)]
                 val loc = Location(overworld, chosenVector.x, chosenVector.y + 1, chosenVector.z)
                 createEnderEye(loc)
-                //shadow.logger.info("stronghold ender eye spawned at: $loc")
             }
         } else {
             shadow.server.broadcast(
@@ -212,7 +209,6 @@ class P3SpawnEnderEyes(private val shadow: Shadow) {
             eyePosition.add(0.0, 1.0, 0.0)
 
             createEnderEye(eyePosition)
-            //shadow.logger.info("nether ender eye spawned at: $eyePosition")
         }
 
 
@@ -228,7 +224,6 @@ class P3SpawnEnderEyes(private val shadow: Shadow) {
             val loc = Location(nether, x.toDouble(), 128.0, z.toDouble())
 
             createEnderEye(loc)
-            //shadow.logger.info("nether roof ender eye spawned at: $loc")
         }
 
         // Finish phase

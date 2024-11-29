@@ -44,14 +44,8 @@ class KillOneNearby : Ability {
         targets.remove(player)
         targets = targets.filter {
             (shadow.gameState.participationStatus[it.uniqueId] == true) &&
-                    (shadow.gameState.currentRoles.getOrDefault(
-                        it.uniqueId,
-                        PlayableRole.SPECTATOR
-                    ).roleFaction != PlayableFaction.SHADOW) &&
-                    shadow.gameState.currentRoles.getOrDefault(
-                        it.uniqueId,
-                        PlayableRole.SPECTATOR
-                    ).roleFaction != PlayableFaction.SPECTATOR
+                    !shadow.isRoleFaction(it,PlayableFaction.SHADOW) &&
+                    !shadow.isRoleFaction(it,PlayableFaction.SPECTATOR)
 
         }
 

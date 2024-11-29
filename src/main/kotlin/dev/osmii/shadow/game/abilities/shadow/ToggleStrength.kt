@@ -17,6 +17,12 @@ import org.bukkit.potion.PotionEffectType
 class ToggleStrength : Ability {
     override val item: ItemStack = ItemStack(Material.POTION)
 
+    private var strength = false
+
+    fun isStrength() : Boolean {
+        return strength
+    }
+
     init {
         item.itemMeta = (item.itemMeta as PotionMeta).apply {
             this.displayName(MiniMessage.miniMessage().deserialize("<!i><red>Empower</red></!i>"))
@@ -47,14 +53,13 @@ class ToggleStrength : Ability {
 
 
     override fun apply(player: Player, shadow: Shadow) {
-        if (!strength.containsKey(player)) strength[player] = false
-        strength[player] = !strength[player]!!
+        strength = !strength
 
         player.sendMessage(
             MiniMessage.miniMessage()
-                .deserialize("<red>Toggled strength</red> <blue>${if (strength[player]!!) "on" else "off"}</blue><red>.</red>")
+                .deserialize("<red>Toggled strength</red> <blue>${if (strength) "on" else "off"}</blue><red>.</red>")
         )
-        if (strength[player]!!) player.addPotionEffect(
+        if (strength) player.addPotionEffect(
             PotionEffect(
                 PotionEffectType.INCREASE_DAMAGE, -1, 0,
                 false, false, true
@@ -62,9 +67,5 @@ class ToggleStrength : Ability {
         )
         else player.removePotionEffect(PotionEffectType.INCREASE_DAMAGE)
 
-    }
-
-    companion object {
-        val strength = mutableMapOf<Player, Boolean>()
     }
 }

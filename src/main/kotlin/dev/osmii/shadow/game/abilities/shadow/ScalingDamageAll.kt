@@ -15,6 +15,8 @@ class ScalingDamageAll : Ability {
     override val item: ItemStack = ItemStack(Material.NETHERITE_SWORD)
 
     private lateinit var cooldown: Cooldown
+    
+    private var hasActivatedStrengthTonight = false
 
     init {
         item.itemMeta = item.itemMeta.apply {
@@ -24,46 +26,56 @@ class ScalingDamageAll : Ability {
                         .deserialize("<!i><gray>Damage all players within</gray> <blue>18</blue> <gray>blocks.</gray> with damage scaling with more players.</!i>")
                 )
             )
-            this.displayName(MiniMessage.miniMessage().deserialize("<!i><red>Krill</red></!i>"))
+            this.displayName(MiniMessage.miniMessage().deserialize("<!i><red>Cull</red></!i>"))
         }
     }
 
     override fun apply(player: Player, shadow: Shadow) {
-        if(!this::cooldown.isInitialized) cooldown = shadow.cooldownManager.getCooldown(this::class)
+        if(toggleScalingDamageAllNightly) {
+            if(shadow.overworld.isDayTime) {
+                player.sendMessage(
+                    MiniMessage.miniMessage()
+                        .deserialize("<red>This ability cannot be used during daytime.</red>")
+                )
+                return
+            }
+            if(this.hasActivatedStrengthTonight) {
+                player.sendMessage(
+                    MiniMessage.miniMessage()
+                        .deserialize("<red>This ability has already been activated tonight</red>")
+                )
+                return
+            }
+            this.hasActivatedStrengthTonight = true
+        } else {
+            if(!this::cooldown.isInitialized) cooldown = shadow.cooldownManager.getCooldown(this::class)
 
-        val cooldownLeft = cooldown.checkCooldown(player)
-        if (cooldownLeft > 0) {
-            shadow.logger.info("Cooldown: $cooldownLeft")
-            player.sendMessage(
-                MiniMessage.miniMessage()
-                    .deserialize("<red>This ability is on cooldown for</red> <blue>${TimeUtil.ticksToText(cooldownLeft)}</blue><red>.</red>")
-            )
-            return
+            val cooldownLeft = cooldown.checkCooldown(player)
+            if (cooldownLeft > 0) {
+                shadow.logger.info("Cooldown: $cooldownLeft")
+                player.sendMessage(
+                    MiniMessage.miniMessage()
+                        .deserialize("<red>This ability is on cooldown for</red> <blue>${TimeUtil.ticksToText(cooldownLeft)}</blue><red>.</red>")
+                )
+                return
+            }
         }
 
+        
         val players = player.world.getNearbyPlayers(player.location, 18.0)
 
         val shadows = players.filter {
             (shadow.gameState.participationStatus[it.uniqueId] == true) &&
-                    (shadow.gameState.currentRoles.getOrDefault(
-                        it.uniqueId,
-                        PlayableRole.SPECTATOR
-                    ).roleFaction == PlayableFaction.SHADOW)
+                    shadow.isRoleFaction(it,PlayableFaction.SHADOW)
         }
 
         var targets = players
 
         targets.remove(player)
         targets = targets.filter {
-            (shadow.gameState.participationStatus[it.uniqueId] == true) &&
-                    (shadow.gameState.currentRoles.getOrDefault(
-                        it.uniqueId,
-                        PlayableRole.SPECTATOR
-                    ).roleFaction != PlayableFaction.SHADOW) &&
-                    shadow.gameState.currentRoles.getOrDefault(
-                        it.uniqueId,
-                        PlayableRole.SPECTATOR.roleFaction
-                    ) != PlayableFaction.SPECTATOR
+            ((shadow.gameState.participationStatus[it.uniqueId] == true) &&
+                    !shadow.isRoleFaction(it,PlayableFaction.SHADOW)) &&
+                    !shadow.isRoleFaction(it,PlayableFaction.SPECTATOR)
 
         }
 
@@ -82,7 +94,7 @@ class ScalingDamageAll : Ability {
 
                 player.sendMessage(
                     MiniMessage.miniMessage().deserialize(
-                        "<red>Killed</red> <blue>${it.name}</blue><red>.</red>"
+                        "<red>Hit</red> <blue>${it.name}</blue><red>.</red>"
                     )
                 )
             }
@@ -92,12 +104,11 @@ class ScalingDamageAll : Ability {
                 it.damage(0.1)
                 it.sendHealthUpdate()
             }
-
-
-
-            cooldown.resetCooldown(player)
+            if(!toggleScalingDamageAllNightly) {
+                cooldown.resetCooldown(player)
+            }
         } else {
-            player.sendMessage(MiniMessage.miniMessage().deserialize("<red>No nearby players to kill.</red>"))
+            player.sendMessage(MiniMessage.miniMessage().deserialize("<red>No nearby players to hit.</red>"))
         }
 
     }
@@ -112,5 +123,7 @@ class ScalingDamageAll : Ability {
             playerCountToDamageList.add(12.0)
             playerCountToDamageList.add(19.0)
         }
+
+        var toggleScalingDamageAllNightly = true
     }
 }

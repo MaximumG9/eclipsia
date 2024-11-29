@@ -4,14 +4,10 @@ import dev.osmii.shadow.enums.ShadowTestAbilities
 import dev.osmii.shadow.game.abilities.Ability
 
 object AbilityTestConfig {
-    private var ability: ShadowTestAbilities = ShadowTestAbilities.ASASSINATE
+    private var ability: ShadowTestAbilities = ShadowTestAbilities.CULL
 
     fun setAbility(testAbility: ShadowTestAbilities) {
         this.ability = testAbility
-    }
-
-    fun getAbility() : ShadowTestAbilities {
-        return ability
     }
 
     fun getShadowSecondAbility() : Ability {

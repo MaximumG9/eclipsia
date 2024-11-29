@@ -1,11 +1,8 @@
 package dev.osmii.shadow.events.custom.abilities.menu
 
 import dev.osmii.shadow.Shadow
-import dev.osmii.shadow.config.AbilityTestConfig
 import dev.osmii.shadow.enums.CID
-import dev.osmii.shadow.enums.PlayableRole
 import dev.osmii.shadow.game.abilities.Ability
-import dev.osmii.shadow.game.abilities.shadow.ToggleStrength
 import dev.osmii.shadow.util.ItemUtil
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
@@ -17,36 +14,39 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.Inventory
-import org.bukkit.inventory.ItemStack
+import java.util.*
 import kotlin.math.floor
 
 class HandleAbilities(val shadow: Shadow) : Listener {
     private var inventories: MutableList<Inventory> = ArrayList()
 
-    private var abilityHashMap: HashMap<ItemStack, Ability> = HashMap()
+    private var playerAbilityHashMap: HashMap<UUID, ArrayList<Ability>> = HashMap()
 
-    private fun registerAbility(ability: Ability) {
-        abilityHashMap[ability.item] = ability
+    fun clear() {
+        playerAbilityHashMap.clear()
+        inventories.clear()
+    }
+
+    fun getAbilities(player: Player) : ArrayList<Ability>? {
+        return playerAbilityHashMap[player.uniqueId]
     }
 
     private fun createAbilityGUI(shadow: Shadow, player: Player, abilities: List<Ability>) {
         val inventory = shadow.server.createInventory(player, InventoryType.CHEST, Component.text("Ability Menu"))
+
         if (abilities.count() > 4) {
             if (abilities.count() < 9) {
                 abilities.forEachIndexed { index, ability ->
-                    if (!abilityHashMap.containsValue(ability)) registerAbility(ability)
                     inventory.setItem(index + 9, ability.item)
                 }
             } else {
                 abilities.forEach {
-                    if (!abilityHashMap.containsValue(it)) registerAbility(it)
                     inventory.addItem(it.item)
                 }
             }
 
         } else {
             abilities.forEachIndexed { index, ability ->
-                if (!abilityHashMap.containsValue(ability)) registerAbility(ability)
                 inventory.setItem(floor(9 * ((index + 1.0) / (abilities.count() + 1)) + 9).toInt(), ability.item)
             }
         }
@@ -57,12 +57,17 @@ class HandleAbilities(val shadow: Shadow) : Listener {
     @EventHandler
     fun onOpenAbilityMenu(e: PlayerInteractEvent) {
         if (e.item == null || !ItemUtil.customIdIs(e.item!!, CID.HOTBAR_ABILITY_SELECT)) return
-        val abilityList: MutableList<Ability> = ArrayList()
-        if (shadow.gameState.currentRoles[e.player.uniqueId] == PlayableRole.SHADOW) {
-            abilityList.add(ToggleStrength())
-            abilityList.add(AbilityTestConfig.getShadowSecondAbility())
+
+        val player = e.player
+
+        if(playerAbilityHashMap[player.uniqueId] == null || playerAbilityHashMap[player.uniqueId]?.isEmpty() == true) {
+            playerAbilityHashMap[player.uniqueId] = arrayListOf()
+            shadow.gameState.currentRoles[player.uniqueId]?.abilities?.forEach {
+                playerAbilityHashMap[player.uniqueId]!!.add(it.invoke())
+            }
         }
-        createAbilityGUI(shadow, e.player, abilityList)
+
+        createAbilityGUI(shadow, e.player, playerAbilityHashMap[player.uniqueId]!!)
     }
 
     @EventHandler
@@ -77,7 +82,12 @@ class HandleAbilities(val shadow: Shadow) : Listener {
             e.isCancelled = true
             return
         }
-        abilityHashMap[e.currentItem]?.apply(e.whoClicked as Player, shadow)
+
+        val ability = playerAbilityHashMap[e.whoClicked.uniqueId]!!.find { it.item == e.currentItem }
+        if(ability == null) {
+            return
+        }
+        ability.apply(e.whoClicked as Player,shadow)
 
         e.isCancelled = true
         e.whoClicked.setItemOnCursor(null)

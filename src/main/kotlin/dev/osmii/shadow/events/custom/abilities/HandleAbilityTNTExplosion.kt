@@ -16,7 +16,7 @@ class HandleAbilityTNTExplosion(val shadow: Shadow) : Listener {
             if (shadow.spawnedTNTs.stream().anyMatch { entity == it }) {
                 if (e.entity is Player) {
                     val player = e.entity as Player
-                    if(shadow.gameState.currentRoles.getOrDefault(player.uniqueId,PlayableRole.SPECTATOR.roleFaction) == PlayableFaction.SHADOW) {
+                    if(shadow.isRoleFaction(player,PlayableFaction.SHADOW)) {
                         e.isCancelled = true
                         player.damage(0.1)
                     }

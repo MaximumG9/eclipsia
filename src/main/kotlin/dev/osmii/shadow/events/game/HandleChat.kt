@@ -2,6 +2,7 @@ package dev.osmii.shadow.events.game
 
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.GamePhase
+import dev.osmii.shadow.enums.PlayableFaction
 import dev.osmii.shadow.enums.PlayableRole
 import io.papermc.paper.chat.ChatRenderer
 import io.papermc.paper.event.player.AsyncChatEvent
@@ -36,7 +37,7 @@ class HandleChat(private val shadow: Shadow) : Listener {
         if (e.player.isOp) return
 
         // If player is spectator, cancel
-        if (shadow.gameState.currentRoles[e.player.uniqueId] == PlayableRole.SPECTATOR) {
+        if (shadow.isRoleFaction(e.player, PlayableFaction.SPECTATOR)) {
             e.isCancelled = true
             e.player.sendMessage(
                 Component.text("You cannot send messages as a spectator.")

@@ -25,14 +25,14 @@ class HandleDayNight(val shadow: Shadow) {
             if (world.time in 12452L..12452L + nightSpeedMult) {
                 glowingUpdatedFor.clear()
                 shadow.server.onlinePlayers.forEach { p ->
-                    if (shadow.gameState.currentRoles[p.uniqueId]!!.roleFaction == PlayableFaction.SHADOW) {
+                    if (shadow.isRoleFaction(p,PlayableFaction.SHADOW)) {
                         Audience.audience(p).sendMessage(
                             MiniMessage.miniMessage()
                                 .deserialize("<green>Darkness approaches. Your powers grow.</green>")
                         )
                     }
-                    if (shadow.gameState.currentRoles[p.uniqueId]!!.roleFaction == PlayableFaction.VILLAGE ||
-                        shadow.gameState.currentRoles[p.uniqueId]!!.roleFaction == PlayableFaction.NEUTRAL
+                    if (shadow.isRoleFaction(p,PlayableFaction.VILLAGE) ||
+                        shadow.isRoleFaction(p,PlayableFaction.NEUTRAL)
                     ) {
                         Audience.audience(p).sendActionBar(
                             MiniMessage.miniMessage().deserialize("<red>Darkness approaches. It is now nighttime</red>")
@@ -51,11 +51,13 @@ class HandleDayNight(val shadow: Shadow) {
                 world.time += nightSpeedMult - 1
                 shadow.server.onlinePlayers.forEach { p ->
                     if(p.isGlowing) p.isGlowing = false
-                    if (shadow.gameState.currentRoles[p.uniqueId]!!.roleFaction == PlayableFaction.VILLAGE) {
+                    if (shadow.isRoleFaction(p,PlayableFaction.VILLAGE)) {
                         p.addPotionEffect(PotionEffect(PotionEffectType.DARKNESS, 40, 0, false, false))
                     }
-                    if (shadow.gameState.currentRoles[p.uniqueId]!!.roleFaction == PlayableFaction.SHADOW) {
-                        if(ToggleStrength.strength[p] == true) {
+                    if (shadow.isRoleFaction(p,PlayableFaction.SHADOW)) {
+                        if(shadow.abilityManager.getAbilities(p)?.any { ability ->
+                            ability is ToggleStrength && ability.isStrength()
+                        } == true) {
                             p.addPotionEffect(PotionEffect(PotionEffectType.SPEED, 40, 1, false, false))
                             p.addPotionEffect(PotionEffect(PotionEffectType.FAST_DIGGING, 40, 4, false, false))
                         }
