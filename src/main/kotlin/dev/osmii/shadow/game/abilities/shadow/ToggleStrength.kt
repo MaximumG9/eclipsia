@@ -17,6 +17,8 @@ import org.bukkit.potion.PotionEffectType
 class ToggleStrength : Ability {
     override val item: ItemStack = ItemStack(Material.POTION)
 
+    override val id = "ASSASSINATE"
+
     private var strength = false
 
     fun isStrength() : Boolean {
@@ -42,6 +44,11 @@ class ToggleStrength : Ability {
                     false,
                     true
                 ), true
+            )
+            this.persistentDataContainer.set(
+                Namespace.ABILITY_SELECT,
+                PersistentDataType.STRING,
+                id
             )
             this.persistentDataContainer.set(
                 Namespace.FORBIDDEN,

@@ -15,6 +15,8 @@ class Namespace(val namespace: NamespacedKey) {
 
         val INVISIBLE = NamespacedKey(Bukkit.getPluginManager().getPlugin("Shadow") as Shadow, "invisible")
 
+        val ABILITY_SELECT = NamespacedKey(Bukkit.getPluginManager().getPlugin("Shadow") as Shadow, "ability-select")
+
         val ABILITY_SELECT_PLAYER = NamespacedKey(Bukkit.getPluginManager().getPlugin("Shadow") as Shadow, "ability-select-player")
         val ABILITY_SELECT_PLAYER_PAGE = NamespacedKey(Bukkit.getPluginManager().getPlugin("Shadow") as Shadow, "ability-select-player-page")
         val ABILITY_SELECT_INTERNAL_MINIMESSAGE = NamespacedKey(Bukkit.getPluginManager().getPlugin("Shadow") as Shadow, "ability-select-internal-minimessage")

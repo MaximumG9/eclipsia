@@ -7,5 +7,7 @@ import org.bukkit.inventory.ItemStack
 interface Ability {
     val item: ItemStack
 
+    val id: String
+
     fun apply(player: Player, shadow: Shadow)
 }

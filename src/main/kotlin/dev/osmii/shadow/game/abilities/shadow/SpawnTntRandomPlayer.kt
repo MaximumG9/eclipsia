@@ -1,8 +1,8 @@
 package dev.osmii.shadow.game.abilities.shadow
 
 import dev.osmii.shadow.Shadow
+import dev.osmii.shadow.enums.Namespace
 import dev.osmii.shadow.enums.PlayableFaction
-import dev.osmii.shadow.enums.PlayableRole
 import dev.osmii.shadow.game.abilities.Ability
 import dev.osmii.shadow.util.TimeUtil
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -11,9 +11,12 @@ import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.entity.TNTPrimed
 import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
 
 class SpawnTntRandomPlayer : Ability {
     override val item: ItemStack = ItemStack(Material.TNT)
+
+    override val id = "NUKE"
 
     private lateinit var cooldown: Cooldown
 
@@ -24,6 +27,11 @@ class SpawnTntRandomPlayer : Ability {
                     MiniMessage.miniMessage()
                         .deserialize("<!i><gray>Spawn tnt on a random player within</gray> <blue>18</blue> <gray>blocks. That explodes within ${TICKS_TO_EXPLODE/20.0}</!i>")
                 )
+            )
+            this.persistentDataContainer.set(
+                Namespace.ABILITY_SELECT,
+                PersistentDataType.STRING,
+                id
             )
             this.displayName(MiniMessage.miniMessage().deserialize("<!i><red>NUKE</red></!i>"))
         }

@@ -2,6 +2,7 @@ package dev.osmii.shadow.events.custom.abilities.menu
 
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.CID
+import dev.osmii.shadow.enums.Namespace
 import dev.osmii.shadow.game.abilities.Ability
 import dev.osmii.shadow.util.ItemUtil
 import net.kyori.adventure.text.Component
@@ -83,10 +84,22 @@ class HandleAbilities(val shadow: Shadow) : Listener {
             return
         }
 
-        val ability = playerAbilityHashMap[e.whoClicked.uniqueId]!!.find { it.item == e.currentItem }
+        val ability = playerAbilityHashMap[e.whoClicked.uniqueId]!!.find {
+            e.currentItem?.let { it1 ->
+                ItemUtil.customKeyIs(
+                    Namespace.ABILITY_SELECT,
+                    it1,
+                    it.id
+                )
+            } == true
+        }
+
         if(ability == null) {
+            e.isCancelled = true
+            e.whoClicked.setItemOnCursor(null)
             return
         }
+
         ability.apply(e.whoClicked as Player,shadow)
 
         e.isCancelled = true

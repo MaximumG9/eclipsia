@@ -7,7 +7,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 
 enum class ShadowTestAbilities(val constructor: KFunction<Ability>, val clazz : KClass<out Ability>) {
-    ASASSINATE(::KillOneNearby, KillOneNearby::class),
+    ASSASSINATE(::KillOneNearby, KillOneNearby::class),
     POISONBURST(::SummonPoisonCloud, SummonPoisonCloud::class),
     CULL(::ScalingDamageAll, ScalingDamageAll::class),
     BEGONE(::TeleportRandomPlayer, TeleportRandomPlayer::class),

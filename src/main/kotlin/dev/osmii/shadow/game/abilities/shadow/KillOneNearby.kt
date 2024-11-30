@@ -1,17 +1,20 @@
 package dev.osmii.shadow.game.abilities.shadow
 
 import dev.osmii.shadow.Shadow
+import dev.osmii.shadow.enums.Namespace
 import dev.osmii.shadow.enums.PlayableFaction
-import dev.osmii.shadow.enums.PlayableRole
 import dev.osmii.shadow.game.abilities.Ability
 import dev.osmii.shadow.util.TimeUtil
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
 
 class KillOneNearby : Ability {
     override val item: ItemStack = ItemStack(Material.NETHERITE_SWORD)
+
+    override val id = "ASSASSINATE"
 
     private lateinit var cooldown: Cooldown
 
@@ -22,6 +25,11 @@ class KillOneNearby : Ability {
                     MiniMessage.miniMessage()
                         .deserialize("<!i><gray>Instantly kill the nearest player within</gray> <blue>18</blue> <gray>blocks.</gray></!i>")
                 )
+            )
+            this.persistentDataContainer.set(
+                Namespace.ABILITY_SELECT,
+                PersistentDataType.STRING,
+                id
             )
             this.displayName(MiniMessage.miniMessage().deserialize("<!i><red>Assassinate</red></!i>"))
         }

@@ -4,7 +4,6 @@ import com.mojang.datafixers.util.Either
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.PlayableFaction
 import dev.osmii.shadow.enums.PlayableRole
-import org.bukkit.Bukkit
 
 class Rolelist {
     var roles = ArrayList<RolelistSelector>()
@@ -21,7 +20,7 @@ class Rolelist {
 
     fun pickRoles(): Either<ArrayList<PlayableRole>,RolelistInvalidReason> {
         val roleList = ArrayList<PlayableRole>()
-        var failReason: RolelistInvalidReason?
+        var failReason: RolelistInvalidReason? = null
         Shadow.logger?.info(getSelectors().toString())
 
         this.roles.sortBy { it.specificity }
@@ -49,7 +48,7 @@ class Rolelist {
 
         pickedRoles = roleList
 
-        failReason = checkValidity().let { return@let if(it.first) null else it.second }
+        failReason = checkValidity().let { return@let if(it.first) failReason else it.second }
 
         if(failReason != null) return Either.right(failReason)
 

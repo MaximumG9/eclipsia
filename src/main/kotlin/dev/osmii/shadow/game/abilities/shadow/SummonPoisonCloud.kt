@@ -3,7 +3,6 @@ package dev.osmii.shadow.game.abilities.shadow
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.Namespace
 import dev.osmii.shadow.enums.PlayableFaction
-import dev.osmii.shadow.enums.PlayableRole
 import dev.osmii.shadow.game.abilities.Ability
 import dev.osmii.shadow.util.ItemUtil
 import dev.osmii.shadow.util.TimeUtil
@@ -19,6 +18,8 @@ import org.bukkit.potion.PotionEffectType
 
 class SummonPoisonCloud : Ability {
     override val item: ItemStack = ItemStack(Material.POTION)
+
+    override val id = "POISONBURST"
 
     private lateinit var cooldown: Cooldown
 
@@ -41,6 +42,11 @@ class SummonPoisonCloud : Ability {
                     false,
                     true
                 ), true
+            )
+            this.persistentDataContainer.set(
+                Namespace.ABILITY_SELECT,
+                PersistentDataType.STRING,
+                id
             )
             this.persistentDataContainer.set(
                 Namespace.FORBIDDEN,
