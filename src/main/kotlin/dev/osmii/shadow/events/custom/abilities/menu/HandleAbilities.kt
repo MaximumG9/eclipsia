@@ -3,10 +3,13 @@ package dev.osmii.shadow.events.custom.abilities.menu
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.CID
 import dev.osmii.shadow.enums.Namespace
+import dev.osmii.shadow.enums.RoleModifier
 import dev.osmii.shadow.game.abilities.Ability
+import dev.osmii.shadow.game.abilities.shadow.NoopAbility
 import dev.osmii.shadow.util.ItemUtil
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -15,6 +18,8 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
 import java.util.*
 import kotlin.math.floor
 
@@ -32,23 +37,67 @@ class HandleAbilities(val shadow: Shadow) : Listener {
         return playerAbilityHashMap[player.uniqueId]
     }
 
-    private fun createAbilityGUI(shadow: Shadow, player: Player, abilities: List<Ability>) {
+    private fun createAbilityGUI(shadow: Shadow, player: Player, abilities: ArrayList<Ability>) {
         val inventory = shadow.server.createInventory(player, InventoryType.CHEST, Component.text("Ability Menu"))
+
+        if(shadow.hasRoleModifier(player,RoleModifier.GUESS_WHO)) {
+            while (abilities.size < 3) {
+                abilities.add(NoopAbility())
+            }
+            abilities.shuffle()
+        }
+
 
         if (abilities.count() > 4) {
             if (abilities.count() < 9) {
                 abilities.forEachIndexed { index, ability ->
-                    inventory.setItem(index + 9, ability.item)
+                    if(shadow.hasRoleModifier(player,RoleModifier.GUESS_WHO)) {
+                        val replacementItem = ItemStack(Material.JIGSAW)
+                        replacementItem.itemMeta = replacementItem.itemMeta.apply {
+                            this.persistentDataContainer.set(
+                                Namespace.ABILITY_SELECT,
+                                PersistentDataType.STRING,
+                                ability.id
+                            )
+                        }
+                        inventory.setItem(index + 9, replacementItem)
+                    } else {
+                        inventory.setItem(index + 9, ability.item)
+                    }
                 }
             } else {
-                abilities.forEach {
-                    inventory.addItem(it.item)
+                abilities.forEach { ability ->
+                    if(shadow.hasRoleModifier(player,RoleModifier.GUESS_WHO)) {
+                        val replacementItem = ItemStack(Material.JIGSAW)
+                        replacementItem.itemMeta = replacementItem.itemMeta.apply {
+                            this.persistentDataContainer.set(
+                                Namespace.ABILITY_SELECT,
+                                PersistentDataType.STRING,
+                                ability.id
+                            )
+                        }
+                        inventory.addItem(replacementItem)
+                    } else {
+                        inventory.addItem(ability.item)
+                    }
                 }
             }
 
         } else {
             abilities.forEachIndexed { index, ability ->
-                inventory.setItem(floor(9 * ((index + 1.0) / (abilities.count() + 1)) + 9).toInt(), ability.item)
+                if(shadow.hasRoleModifier(player,RoleModifier.GUESS_WHO)) {
+                    val replacementItem = ItemStack(Material.JIGSAW)
+                    replacementItem.itemMeta = replacementItem.itemMeta.apply {
+                        this.persistentDataContainer.set(
+                            Namespace.ABILITY_SELECT,
+                            PersistentDataType.STRING,
+                            ability.id
+                        )
+                    }
+                    inventory.setItem(floor(9 * ((index + 1.0) / (abilities.count() + 1)) + 9).toInt(), replacementItem)
+                } else {
+                    inventory.setItem(floor(9 * ((index + 1.0) / (abilities.count() + 1)) + 9).toInt(), ability.item)
+                }
             }
         }
         player.openInventory(inventory)
@@ -84,7 +133,9 @@ class HandleAbilities(val shadow: Shadow) : Listener {
             return
         }
 
-        val ability = playerAbilityHashMap[e.whoClicked.uniqueId]!!.find {
+        val player = e.whoClicked as Player
+
+        val ability = playerAbilityHashMap[player.uniqueId]!!.find {
             e.currentItem?.let { it1 ->
                 ItemUtil.customKeyIs(
                     Namespace.ABILITY_SELECT,
@@ -96,17 +147,20 @@ class HandleAbilities(val shadow: Shadow) : Listener {
 
         if(ability == null) {
             e.isCancelled = true
-            e.whoClicked.setItemOnCursor(null)
+            player.setItemOnCursor(null)
             return
         }
 
-        ability.apply(e.whoClicked as Player,shadow)
+        val returnText = ability.apply(player,shadow)
+
+        if(!shadow.hasRoleModifier(player,RoleModifier.GUESS_WHO))
+            player.sendMessage(returnText)
 
         e.isCancelled = true
-        e.whoClicked.setItemOnCursor(null)
+        player.setItemOnCursor(null)
 
         Bukkit.getScheduler().runTaskLater(shadow, Runnable {
-            e.whoClicked.closeInventory()
+            player.closeInventory()
         }, 1)
     }
 }

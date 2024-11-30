@@ -1,4 +1,4 @@
-package dev.osmii.shadow.events.custom
+package dev.osmii.shadow.events.custom.roles.modifiers
 
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.events.ListenerPriority
@@ -7,7 +7,7 @@ import com.comphenix.protocol.events.PacketEvent
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.CID
 import dev.osmii.shadow.enums.RoleModifier
-import dev.osmii.shadow.events.custom.PacketMakeItemsUndifferentiable.Companion.fakeItem
+import dev.osmii.shadow.events.custom.roles.modifiers.PacketMakeItemsUndifferentiable.Companion.fakeItem
 import dev.osmii.shadow.util.ItemUtil
 import net.kyori.adventure.text.Component
 

@@ -5,6 +5,7 @@ import dev.osmii.shadow.enums.Namespace
 import dev.osmii.shadow.enums.PlayableFaction
 import dev.osmii.shadow.game.abilities.Ability
 import dev.osmii.shadow.util.TimeUtil
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Material
 import org.bukkit.entity.EntityType
@@ -37,17 +38,14 @@ class SpawnTntRandomPlayer : Ability {
         }
     }
 
-    override fun apply(player: Player, shadow: Shadow) {
+    override fun apply(player: Player, shadow: Shadow) : Component {
         if(!this::cooldown.isInitialized) cooldown = shadow.cooldownManager.getCooldown(this::class)
 
         val cooldownLeft = cooldown.checkCooldown(player)
         if (cooldownLeft > 0) {
             shadow.logger.info("Cooldown: $cooldownLeft")
-            player.sendMessage(
-                MiniMessage.miniMessage()
-                    .deserialize("<red>This ability is on cooldown for</red> <blue>${TimeUtil.ticksToText(cooldownLeft)}</blue><red>.</red>")
-            )
-            return
+            return MiniMessage.miniMessage()
+                .deserialize("<red>This ability is on cooldown for</red> <blue>${TimeUtil.ticksToText(cooldownLeft)}</blue><red>.</red>")
         }
 
         var targets = player.world.getNearbyPlayers(player.location, 18.0)
@@ -66,20 +64,16 @@ class SpawnTntRandomPlayer : Ability {
 
             killed.location.world.strikeLightningEffect(killed.location)
 
-
-            player.sendMessage(
-                MiniMessage.miniMessage().deserialize(
-                    "<red>Summoned TNT on</red> <blue>${killed.name}</blue><red>.</red>"
-                )
-            )
-
             shadow.spawnedTNTs.add(tnt.uniqueId)
 
-            TimeUtil.setCooldown(shadow, COOLDOWN_KEY, player.uniqueId.toString())
-        } else {
-            player.sendMessage(MiniMessage.miniMessage().deserialize("<red>No nearby players to summon TNT on.</red>"))
-        }
+            cooldown.resetCooldown(player)
 
+            return MiniMessage.miniMessage().deserialize(
+                    "<red>Summoned TNT on</red> <blue>${killed.name}</blue><red>.</red>"
+                )
+        } else {
+            return MiniMessage.miniMessage().deserialize("<red>No nearby players to summon TNT on.</red>")
+        }
     }
 
     companion object {

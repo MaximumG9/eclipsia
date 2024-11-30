@@ -1,4 +1,4 @@
-package dev.osmii.shadow.events.game
+package dev.osmii.shadow.events.custom.roles
 
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.events.ListenerPriority

@@ -28,7 +28,7 @@ class CommandShadowChat(val shadow: Shadow) : CommandExecutor {
 
         val message = args.joinToString(" ")
         shadow.server.onlinePlayers.forEach { p ->
-            if (shadow.isRoleFaction(player,PlayableFaction.SHADOW)) {
+            if (shadow.isRoleFaction(p,PlayableFaction.SHADOW)) {
                 p.sendMessage(
                     MiniMessage.miniMessage()
                         .deserialize("<red>[Shadow Chat] </red><white>${player.name} » </white><gray>$message</gray>")

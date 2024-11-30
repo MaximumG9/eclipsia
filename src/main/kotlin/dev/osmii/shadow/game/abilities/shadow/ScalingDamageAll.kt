@@ -5,6 +5,7 @@ import dev.osmii.shadow.enums.Namespace
 import dev.osmii.shadow.enums.PlayableFaction
 import dev.osmii.shadow.game.abilities.Ability
 import dev.osmii.shadow.util.TimeUtil
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -38,21 +39,15 @@ class ScalingDamageAll : Ability {
         }
     }
 
-    override fun apply(player: Player, shadow: Shadow) {
+    override fun apply(player: Player, shadow: Shadow) : Component {
         if(toggleScalingDamageAllNightly) {
             if(shadow.overworld.isDayTime) {
-                player.sendMessage(
-                    MiniMessage.miniMessage()
-                        .deserialize("<red>This ability cannot be used during daytime.</red>")
-                )
-                return
+                return MiniMessage.miniMessage()
+                    .deserialize("<red>This ability cannot be used during daytime.</red>")
             }
             if(this.hasActivatedStrengthTonight) {
-                player.sendMessage(
-                    MiniMessage.miniMessage()
-                        .deserialize("<red>This ability has already been activated tonight</red>")
-                )
-                return
+                return MiniMessage.miniMessage()
+                    .deserialize("<red>This ability has already been activated tonight</red>")
             }
             this.hasActivatedStrengthTonight = true
         } else {
@@ -61,11 +56,8 @@ class ScalingDamageAll : Ability {
             val cooldownLeft = cooldown.checkCooldown(player)
             if (cooldownLeft > 0) {
                 shadow.logger.info("Cooldown: $cooldownLeft")
-                player.sendMessage(
-                    MiniMessage.miniMessage()
-                        .deserialize("<red>This ability is on cooldown for</red> <blue>${TimeUtil.ticksToText(cooldownLeft)}</blue><red>.</red>")
-                )
-                return
+                return MiniMessage.miniMessage()
+                    .deserialize("<red>This ability is on cooldown for</red> <blue>${TimeUtil.ticksToText(cooldownLeft)}</blue><red>.</red>")
             }
         }
 
@@ -95,16 +87,19 @@ class ScalingDamageAll : Ability {
 
 
         if (targets.isNotEmpty()) {
+            val returnComponent = Component.text("")
+
             targets.forEach {
                 it.damage(damage)
                 it.sendHealthUpdate()
                 it.location.world.strikeLightningEffect(it.location)
 
-                player.sendMessage(
+                returnComponent.append(
                     MiniMessage.miniMessage().deserialize(
                         "<red>Hit</red> <blue>${it.name}</blue><red>.</red>"
                     )
                 )
+                returnComponent.appendNewline()
             }
 
             shadows.forEach { // Fake damaging the shadows
@@ -115,8 +110,9 @@ class ScalingDamageAll : Ability {
             if(!toggleScalingDamageAllNightly) {
                 cooldown.resetCooldown(player)
             }
+            return returnComponent
         } else {
-            player.sendMessage(MiniMessage.miniMessage().deserialize("<red>No nearby players to hit.</red>"))
+            return MiniMessage.miniMessage().deserialize("<red>No nearby players to hit.</red>")
         }
 
     }

@@ -13,6 +13,10 @@ import dev.osmii.shadow.events.custom.abilities.item.sheriff.HandleSheriffBow
 import dev.osmii.shadow.events.custom.abilities.item.trident.HandleTrident
 import dev.osmii.shadow.events.custom.abilities.item.trident.HandleTridentCooldown
 import dev.osmii.shadow.events.custom.abilities.menu.HandleAbilities
+import dev.osmii.shadow.events.custom.roles.PacketHideItemSwitch
+import dev.osmii.shadow.events.custom.roles.PacketKeepGlowing
+import dev.osmii.shadow.events.custom.roles.modifiers.PacketMakeItemsUndifferentiable
+import dev.osmii.shadow.events.custom.roles.modifiers.PacketMakeItemsUndifferentiableSingle
 import dev.osmii.shadow.events.game.*
 import dev.osmii.shadow.game.abilities.shadow.CooldownManager
 import dev.osmii.shadow.game.abilities.shadow.PoisonCloud

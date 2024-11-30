@@ -5,6 +5,7 @@ import dev.osmii.shadow.enums.Namespace
 import dev.osmii.shadow.enums.PlayableFaction
 import dev.osmii.shadow.game.abilities.Ability
 import dev.osmii.shadow.util.TimeUtil
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -34,17 +35,14 @@ class TeleportRandomPlayer : Ability {
         }
     }
 
-    override fun apply(player: Player, shadow: Shadow) {
+    override fun apply(player: Player, shadow: Shadow) : Component {
         if(!this::cooldown.isInitialized) cooldown = shadow.cooldownManager.getCooldown(this::class)
 
         val cooldownLeft = cooldown.checkCooldown(player)
         if (cooldownLeft > 0) {
             shadow.logger.info("Cooldown: $cooldownLeft")
-            player.sendMessage(
-                MiniMessage.miniMessage()
-                    .deserialize("<red>This ability is on cooldown for</red> <blue>${TimeUtil.ticksToText(cooldownLeft)}</blue><red>.</red>")
-            )
-            return
+            return MiniMessage.miniMessage()
+                .deserialize("<red>This ability is on cooldown for</red> <blue>${TimeUtil.ticksToText(cooldownLeft)}</blue><red>.</red>")
         }
 
         var targets = player.world.getNearbyPlayers(player.location, 18.0)
@@ -63,17 +61,13 @@ class TeleportRandomPlayer : Ability {
             target.teleport(teleportPosition.add(0.0, HEIGHT_ABOVE_GROUND,0.0))
 
             target.location.world.strikeLightningEffect(target.location)
-            player.sendMessage(
-                MiniMessage.miniMessage().deserialize(
+            cooldown.resetCooldown(player)
+            return MiniMessage.miniMessage().deserialize(
                     "<red>Teleported</red> <blue>${target.name}</blue><red>.</red>"
                 )
-            )
-
-            cooldown.resetCooldown(player)
         } else {
-            player.sendMessage(MiniMessage.miniMessage().deserialize("<red>No nearby players to teleport.</red>"))
+            return MiniMessage.miniMessage().deserialize("<red>No nearby players to teleport.</red>")
         }
-
     }
 
     companion object {

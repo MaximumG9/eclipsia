@@ -4,6 +4,7 @@ import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.Namespace
 import dev.osmii.shadow.game.abilities.Ability
 import dev.osmii.shadow.util.ItemUtil
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -59,13 +60,10 @@ class ToggleStrength : Ability {
     }
 
 
-    override fun apply(player: Player, shadow: Shadow) {
+    override fun apply(player: Player, shadow: Shadow) : Component {
         strength = !strength
 
-        player.sendMessage(
-            MiniMessage.miniMessage()
-                .deserialize("<red>Toggled strength</red> <blue>${if (strength) "on" else "off"}</blue><red>.</red>")
-        )
+
         if (strength) player.addPotionEffect(
             PotionEffect(
                 PotionEffectType.INCREASE_DAMAGE, -1, 0,
@@ -74,5 +72,7 @@ class ToggleStrength : Ability {
         )
         else player.removePotionEffect(PotionEffectType.INCREASE_DAMAGE)
 
+        return MiniMessage.miniMessage()
+                .deserialize("<red>Toggled strength</red> <blue>${if (strength) "on" else "off"}</blue><red>.</red>")
     }
 }
