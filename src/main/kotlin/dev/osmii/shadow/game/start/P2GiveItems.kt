@@ -81,15 +81,20 @@ class P2GiveItems(private val shadow: Shadow) {
             }
 
             if(role != PlayableRole.TRIDENT && role != PlayableRole.SHERIFF) {
-                val fakeItem = ItemStack(Material.STICK)
-                fakeItem.itemMeta.apply {
+                val fakeItem = ItemStack(Material.HEART_OF_THE_SEA)
+                fakeItem.itemMeta = fakeItem.itemMeta.apply {
                     this.persistentDataContainer.set(
                         Namespace.CUSTOM_ID,
                         PersistentDataType.STRING,
                         CID.FAKE_SPECIAL_ITEM
                     )
+                    this.persistentDataContainer.set(
+                        Namespace.INVISIBLE,
+                        PersistentDataType.BOOLEAN,
+                        true
+                    )
                 }
-                player.inventory.setItem(9, ItemStack(Material.STICK))
+                player.inventory.setItem(9, fakeItem)
             }
 
             val abilitySelector = ItemStack(Material.NETHER_STAR, 1)
