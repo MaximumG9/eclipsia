@@ -9,6 +9,8 @@ class Namespace(val namespace: NamespacedKey) {
         val FORBIDDEN = NamespacedKey(Bukkit.getPluginManager().getPlugin("Shadow") as Shadow, "forbidden")
         val CUSTOM_ID = NamespacedKey(Bukkit.getPluginManager().getPlugin("Shadow") as Shadow, "custom-id")
 
+        val MODIFIER_SELECT_ADD_MODIFIER = NamespacedKey(Bukkit.getPluginManager().getPlugin("Shadow") as Shadow, "add-modifier")
+
         val ROLE_SELECT_ADD_ROLE = NamespacedKey(Bukkit.getPluginManager().getPlugin("Shadow") as Shadow, "add-role")
 
         val INVISIBLE = NamespacedKey(Bukkit.getPluginManager().getPlugin("Shadow") as Shadow, "invisible")

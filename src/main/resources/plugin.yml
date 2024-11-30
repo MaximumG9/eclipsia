@@ -16,6 +16,9 @@ commands:
     $roles:
         description: Open role list menu
         permission: shadow.admin
+    $modifiers:
+      description: Open modifier list menu
+      permission: shadow.admin
     $location:
       description: Sets the center location of the game
       permission: shadow.admin

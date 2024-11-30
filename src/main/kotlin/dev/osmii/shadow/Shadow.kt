@@ -7,10 +7,7 @@ import dev.osmii.shadow.enums.PlayableFaction
 import dev.osmii.shadow.enums.PlayableRole
 import dev.osmii.shadow.enums.RoleModifier
 import dev.osmii.shadow.events.HandleItemInteractionRestrict
-import dev.osmii.shadow.events.custom.HandleAddRole
-import dev.osmii.shadow.events.custom.HandleDayNight
-import dev.osmii.shadow.events.custom.HandleParticipationToggle
-import dev.osmii.shadow.events.custom.PacketKeepGlowing
+import dev.osmii.shadow.events.custom.*
 import dev.osmii.shadow.events.custom.abilities.HandleAbilityTNTExplosion
 import dev.osmii.shadow.events.custom.abilities.item.sheriff.HandleSheriffBow
 import dev.osmii.shadow.events.custom.abilities.item.trident.HandleTrident
@@ -30,7 +27,6 @@ import org.bukkit.scoreboard.Team
 import org.bukkit.util.BoundingBox
 import java.util.*
 import java.util.logging.Logger
-import kotlin.collections.HashMap
 
 class Shadow : JavaPlugin() {
     val gameState: ShadowGameState = ShadowGameState()
@@ -66,6 +62,7 @@ class Shadow : JavaPlugin() {
 
         Bukkit.getPluginManager().registerEvents(HandleParticipationToggle(this), this)
         Bukkit.getPluginManager().registerEvents(HandleAddRole(this), this)
+        Bukkit.getPluginManager().registerEvents(HandleAddModifier(this), this)
         Bukkit.getPluginManager().registerEvents(abilityManager, this)
         Bukkit.getPluginManager().registerEvents(HandleEyePickup(this), this)
 
@@ -73,12 +70,15 @@ class Shadow : JavaPlugin() {
 
         protocolManager!!.addPacketListener(PacketHideItemSwitch(this))
         protocolManager!!.addPacketListener(PacketKeepGlowing(this))
+        protocolManager!!.addPacketListener(PacketMakeItemsUndifferentiable(this))
+        protocolManager!!.addPacketListener(PacketMakeItemsUndifferentiableSingle(this))
 
         // Register commands
         getCommand("\$roles")!!.setExecutor(CommandRoles(this))
         getCommand("\$location")!!.setExecutor(CommandLocation(this))
         getCommand("\$start")!!.setExecutor(CommandStart(this))
         getCommand("\$cancel")!!.setExecutor(CommandCancel(this))
+        getCommand("\$modifiers")!!.setExecutor(CommandRoleModifiers(this))
         getCommand("shadowchat")!!.setExecutor(CommandShadowChat(this))
 
         CommandConfig(this).register((this.server as CraftServer).server.commands.dispatcher)

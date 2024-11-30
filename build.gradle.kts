@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm") version "1.9.21"
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("io.papermc.paperweight.userdev") version "1.7.1"
+    id("xyz.jpenilla.run-paper") version "2.3.1"
     application
 }
 
@@ -57,6 +58,13 @@ tasks {
     build {
     }
 
+    runServer {
+        // Configure the Minecraft version for our task.
+        // This is the only required configuration besides applying the plugin.
+        // Your plugin's jar (or shadowJar if present) will be used automatically.
+        minecraftVersion("1.20.4")
+    }
+
     shadowJar {
         archiveClassifier.set("")
         // destinationDirectory.set(layout.buildDirectory.dir("C:/Users/Osmii/Downloads"))
@@ -65,6 +73,6 @@ tasks {
     }
 
     reobfJar {
-        this.outputJar.set(layout.buildDirectory.file("C:/Users/Gamer/Desktop/Paper 1.20.4/plugins/Shadow-1.2.jar"))
+        // this.outputJar.set(layout.buildDirectory.file("C:/Users/Gamer/Desktop/Paper 1.20.4/plugins/Shadow-1.2.jar"))
     }
 }
