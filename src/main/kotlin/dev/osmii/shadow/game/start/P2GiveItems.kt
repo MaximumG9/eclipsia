@@ -4,9 +4,12 @@ import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.CID
 import dev.osmii.shadow.enums.Namespace
 import dev.osmii.shadow.enums.PlayableRole
+import dev.osmii.shadow.enums.RoleModifier
 import dev.osmii.shadow.util.ItemUtil
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Material
+import org.bukkit.attribute.Attribute
+import org.bukkit.attribute.AttributeModifier
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
@@ -44,6 +47,10 @@ class P2GiveItems(private val shadow: Shadow) {
                         PersistentDataType.STRING,
                         CID.INVENTORY_SHERIFF_BOW
                     )
+                    if(shadow.hasRoleModifier(player,RoleModifier.GUESS_WHO)) {
+                        this.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, AttributeModifier("bowAttackModifier",-2.9,AttributeModifier.Operation.ADD_NUMBER))
+                        this.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
+                    }
                 }
                 player.inventory.setItem(9, bow)
             }
@@ -93,6 +100,13 @@ class P2GiveItems(private val shadow: Shadow) {
                         PersistentDataType.BOOLEAN,
                         true
                     )
+                    if(shadow.hasRoleModifier(player,RoleModifier.GUESS_WHO)) {
+                        this.addAttributeModifier(
+                            Attribute.GENERIC_ATTACK_SPEED,
+                            AttributeModifier("fakeModifier", -2.9, AttributeModifier.Operation.ADD_NUMBER)
+                        )
+                        this.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
+                    }
                 }
                 player.inventory.setItem(9, fakeItem)
             }

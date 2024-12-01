@@ -34,9 +34,12 @@ class Rolelist {
 
         for (sel in this.roles) {
             Shadow.logger?.info("1: ${sel.roles}")
+            if (sel.mutableRoles.size == 0) {
+                failReason = RolelistInvalidReason.UNIQUE_CONFLICT
+                break
+            }
             val role = sel.mutableRoles.random()
             roleList.add(role)
-            if (sel.mutableRoles.size == 0) failReason = RolelistInvalidReason.UNIQUE_CONFLICT
             if (role.isUnique) {
                 this.roles.forEach { selector2 ->
                     Shadow.logger?.info("2: ${selector2.roles}")

@@ -40,7 +40,7 @@ enum class PlayableRole(
         true, listOf()),
     TRIDENT(PlayableFaction.SHADOW, PlayableSubfaction.SHADOW_KILLING, Material.TRIDENT,
         "Poseidon's Wrath", "Use your trident to wipe out the villagers", NamedTextColor.BLUE,
-        true, listOf(::ToggleStrength)),
+        false, listOf(::ToggleStrength)),
     SPECTATOR(PlayableFaction.SPECTATOR, PlayableSubfaction.SPECTATOR, Material.BARRIER,
         "Spectator", "Spectating.", NamedTextColor.GRAY,
         false, listOf()),

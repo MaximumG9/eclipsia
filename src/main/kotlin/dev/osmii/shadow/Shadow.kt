@@ -7,7 +7,10 @@ import dev.osmii.shadow.enums.PlayableFaction
 import dev.osmii.shadow.enums.PlayableRole
 import dev.osmii.shadow.enums.RoleModifier
 import dev.osmii.shadow.events.HandleItemInteractionRestrict
-import dev.osmii.shadow.events.custom.*
+import dev.osmii.shadow.events.custom.HandleAddModifier
+import dev.osmii.shadow.events.custom.HandleAddRole
+import dev.osmii.shadow.events.custom.HandleDayNight
+import dev.osmii.shadow.events.custom.HandleParticipationToggle
 import dev.osmii.shadow.events.custom.abilities.HandleAbilityTNTExplosion
 import dev.osmii.shadow.events.custom.abilities.item.sheriff.HandleSheriffBow
 import dev.osmii.shadow.events.custom.abilities.item.trident.HandleTrident
@@ -15,6 +18,7 @@ import dev.osmii.shadow.events.custom.abilities.item.trident.HandleTridentCooldo
 import dev.osmii.shadow.events.custom.abilities.menu.HandleAbilities
 import dev.osmii.shadow.events.custom.roles.PacketHideItemSwitch
 import dev.osmii.shadow.events.custom.roles.PacketKeepGlowing
+import dev.osmii.shadow.events.custom.roles.modifiers.PacketFakeReduceSpecialItemAttackCooldown
 import dev.osmii.shadow.events.custom.roles.modifiers.PacketMakeItemsUndifferentiable
 import dev.osmii.shadow.events.custom.roles.modifiers.PacketMakeItemsUndifferentiableSingle
 import dev.osmii.shadow.events.game.*
@@ -76,6 +80,7 @@ class Shadow : JavaPlugin() {
         protocolManager!!.addPacketListener(PacketKeepGlowing(this))
         protocolManager!!.addPacketListener(PacketMakeItemsUndifferentiable(this))
         protocolManager!!.addPacketListener(PacketMakeItemsUndifferentiableSingle(this))
+        protocolManager!!.addPacketListener(PacketFakeReduceSpecialItemAttackCooldown(this))
 
         // Register commands
         getCommand("\$roles")!!.setExecutor(CommandRoles(this))
