@@ -74,6 +74,8 @@ class Shadow : JavaPlugin() {
         Bukkit.getPluginManager().registerEvents(abilityManager, this)
         Bukkit.getPluginManager().registerEvents(HandleEyePickup(this), this)
 
+        Bukkit.getPluginManager().registerEvents(HandleAdvancementEvent(this), this)
+
         Bukkit.getPluginManager().registerEvents(HandleAbilityTNTExplosion(this), this)
 
         protocolManager!!.addPacketListener(PacketHideItemSwitch(this))
