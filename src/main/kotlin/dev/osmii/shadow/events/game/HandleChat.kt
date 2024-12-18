@@ -34,10 +34,11 @@ class HandleChat(private val shadow: Shadow) : Listener {
         e.renderer(Renderer())
 
         if (shadow.gameState.currentPhase != GamePhase.GAME_IN_PROGRESS) return
-        if (e.player.isOp) return
+        // Don't let operators bypass chat restrictions because they play the game too
+        // if (e.player.isOp) return
 
         // If player is spectator, cancel
-        if (shadow.isRoleFaction(e.player, PlayableFaction.SPECTATOR)) {
+        if (shadow.isRoleFaction(e.player, PlayableFaction.SPECTATOR) && !e.player.isOp) {
             e.isCancelled = true
             e.player.sendMessage(
                 Component.text("You cannot send messages as a spectator.")
