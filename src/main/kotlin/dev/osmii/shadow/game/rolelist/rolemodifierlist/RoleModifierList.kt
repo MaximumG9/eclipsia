@@ -4,68 +4,68 @@ import dev.osmii.shadow.enums.RoleModifier
 import kotlin.random.Random
 
 class RoleModifierList {
-    private val modifierMap : ArrayList<RoleModifierSelector> = arrayListOf()
+    private val modifiers : ArrayList<RoleModifierSelector> = arrayListOf()
 
     fun addModifierAtID(id: Int) {
-        val selector = modifierMap[id]
+        val selector = modifiers[id]
         selector.incCount()
     }
     fun removeModifierAtID(id: Int) {
-        val selector = modifierMap[id]
+        val selector = modifiers[id]
         if(!selector.decCount()) {
-            modifierMap.remove(selector)
+            modifiers.remove(selector)
         }
     }
     fun increaseModifierChanceAtID(id: Int, delta: Int) {
-        val selector = modifierMap[id]
+        val selector = modifiers[id]
         selector.incChance(delta)
     }
     fun decreaseModifierChanceAtID(id: Int, delta: Int) {
-        val selector = modifierMap[id]
+        val selector = modifiers[id]
         if(!selector.decChance(delta)) {
-            modifierMap.remove(selector)
+            modifiers.remove(selector)
         }
     }
 
     fun addModifier(modifier: RoleModifier) {
-        val selector = modifierMap.find { selector -> selector.modifier == modifier }
+        val selector = modifiers.find { selector -> selector.modifier == modifier }
         if(selector == null) {
-            modifierMap.add(RoleModifierSelector(modifier,100,1));
+            modifiers.add(RoleModifierSelector(modifier,100,1));
             return
         }
         selector.incCount()
     }
 
     fun removeModifier(modifier: RoleModifier) {
-        val selector = modifierMap.find { selector -> selector.modifier == modifier }
+        val selector = modifiers.find { selector -> selector.modifier == modifier }
         if(selector == null) {
             return
         }
         if(!selector.decCount()) {
-            modifierMap.remove(selector)
+            modifiers.remove(selector)
         }
     }
 
     fun getModifiers() : List<RoleModifierSelector> {
-        return modifierMap
+        return modifiers
     }
 
     fun increaseModifierChance(modifier: RoleModifier, delta: Int) {
-        val selector = modifierMap.find { selector -> selector.modifier == modifier }
+        val selector = modifiers.find { selector -> selector.modifier == modifier }
         if(selector == null) {
-            modifierMap.add(RoleModifierSelector(modifier,100,1))
+            modifiers.add(RoleModifierSelector(modifier,100,1))
             return
         }
         selector.incChance(delta)
     }
 
     fun decreaseModifierChance(modifier: RoleModifier, delta: Int) {
-        val selector = modifierMap.find { selector -> selector.modifier == modifier }
+        val selector = modifiers.find { selector -> selector.modifier == modifier }
         if(selector == null) {
             return
         }
         if(!selector.decChance(delta)) {
-            modifierMap.remove(selector)
+            modifiers.remove(selector)
         }
     }
 
@@ -76,8 +76,8 @@ class RoleModifierList {
             modifiers.add(mutableSetOf())
         }
 
-        modifierMap.forEach { selector ->
-            for (i in 0..selector.count) {
+        this.modifiers.forEach { selector ->
+            for (i in 0..<selector.count) {
                 if (Random.nextInt(100) <= selector.chance) {
                     modifiers[Random.nextInt(size)].add(selector.modifier)
                 }
