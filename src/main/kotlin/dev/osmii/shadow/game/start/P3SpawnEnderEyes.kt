@@ -248,7 +248,7 @@ class P3SpawnEnderEyes(private val shadow: Shadow) {
         display.displayHeight = 3.0F
         display.displayWidth = 3.0F
 
-        shadow.eyes[e.uniqueId] = display
+        shadow.eyes[e.uniqueId] = display.uniqueId
 
         return e
     }
