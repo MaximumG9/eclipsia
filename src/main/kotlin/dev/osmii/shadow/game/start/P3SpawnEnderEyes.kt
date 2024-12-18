@@ -12,12 +12,15 @@ import com.sk89q.worldedit.regions.CuboidRegion
 import com.sk89q.worldedit.world.block.BlockTypes
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.GamePhase
+import dev.osmii.shadow.enums.PlayableRole
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Item
 import org.bukkit.entity.ItemDisplay
+import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.BoundingBox
 import kotlin.random.Random
@@ -248,7 +251,20 @@ class P3SpawnEnderEyes(private val shadow: Shadow) {
         display.displayHeight = 3.0F
         display.displayWidth = 3.0F
 
-        shadow.eyes[e.uniqueId] = display.uniqueId
+        val lookerArmorStand = loc.world.spawnEntity(loc, EntityType.ARMOR_STAND) as ArmorStand
+        lookerArmorStand.addEquipmentLock(EquipmentSlot.HEAD, ArmorStand.LockType.REMOVING_OR_CHANGING)
+        lookerArmorStand.setItem(EquipmentSlot.HEAD,e.itemStack)
+        lookerArmorStand.isMarker = true
+        lookerArmorStand.isGlowing = true
+
+        shadow.gameState.currentRoles.forEach { (uuid, role) ->
+            val player = shadow.server.getPlayer(uuid)
+            if(role != PlayableRole.LOOKER) {
+                player?.hideEntity(shadow, lookerArmorStand)
+            }
+        }
+
+        shadow.eyes[e.uniqueId] = setOf(display.uniqueId,lookerArmorStand.uniqueId)
 
         return e
     }

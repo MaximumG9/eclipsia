@@ -34,8 +34,11 @@ enum class PlayableRole(
     CORONER(PlayableFaction.VILLAGE, PlayableSubfaction.VILLAGE_INVESTIGATIVE, Material.SHEARS,
         "Coroner", "Inspect bodies and uncover death causes.", NamedTextColor.GREEN,
         true, listOf()),
+    LOOKER(PlayableFaction.VILLAGE, PlayableSubfaction.VILLAGE_SUPPORT, Material.ENDER_EYE,
+        "Seer (Looker)", "Ender eyes glow", NamedTextColor.GREEN,
+        true, listOf()),
 
-    ORACLE(PlayableFaction.SHADOW, PlayableSubfaction.SHADOW_KILLING, Material.ENDER_EYE,
+    ORACLE(PlayableFaction.SHADOW, PlayableSubfaction.SHADOW_KILLING, Material.BEACON,
         "Oracle", "Kill others by guessing their role.", NamedTextColor.RED,
         true, listOf()),
     TRIDENT(PlayableFaction.SHADOW, PlayableSubfaction.SHADOW_KILLING, Material.TRIDENT,

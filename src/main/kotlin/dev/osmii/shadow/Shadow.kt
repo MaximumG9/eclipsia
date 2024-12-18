@@ -39,7 +39,7 @@ class Shadow : JavaPlugin() {
     val gameState: ShadowGameState = ShadowGameState()
     private var protocolManager: ProtocolManager? = null
     var strongholdBoundingBox: BoundingBox? = null
-    val eyes: HashMap<UUID, UUID> = HashMap()
+    val eyes: HashMap<UUID, Set<UUID>> = HashMap()
     val poisonClouds = ArrayList<PoisonCloud>()
     val spawnedTNTs = ArrayList<UUID>()
     val cooldownManager = CooldownManager(this)
