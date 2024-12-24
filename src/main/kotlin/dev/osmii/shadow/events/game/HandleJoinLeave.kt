@@ -37,6 +37,12 @@ class HandleJoinLeave(private val shadow: Shadow) : Listener {
             )
         }
 
+        if(!shadow.isRole(e.player,PlayableRole.LOOKER)) {
+            shadow.eyes.values.forEach { uuids ->
+                e.player.hideEntity(shadow, shadow.server.getEntity(uuids.second)!!)
+            }
+        }
+
         if (shadow.gameState.currentPhase == GamePhase.GAME_IN_PROGRESS && !shadow.gameState.currentRoles.containsKey(e.player.uniqueId)) {
             val p = e.player
             shadow.gameState.currentRoles[p.uniqueId] = PlayableRole.SPECTATOR

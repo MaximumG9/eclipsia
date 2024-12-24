@@ -255,6 +255,7 @@ class P3SpawnEnderEyes(private val shadow: Shadow) {
         lookerArmorStand.addEquipmentLock(EquipmentSlot.HEAD, ArmorStand.LockType.REMOVING_OR_CHANGING)
         lookerArmorStand.setItem(EquipmentSlot.HEAD,e.itemStack)
         lookerArmorStand.isMarker = true
+        lookerArmorStand.isInvisible = true
         lookerArmorStand.isGlowing = true
 
         shadow.gameState.currentRoles.forEach { (uuid, role) ->
@@ -264,7 +265,7 @@ class P3SpawnEnderEyes(private val shadow: Shadow) {
             }
         }
 
-        shadow.eyes[e.uniqueId] = setOf(display.uniqueId,lookerArmorStand.uniqueId)
+        shadow.eyes[e.uniqueId] = Pair(display.uniqueId,lookerArmorStand.uniqueId)
 
         return e
     }
