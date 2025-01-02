@@ -22,6 +22,7 @@ import dev.osmii.shadow.events.custom.roles.modifiers.PacketFakeReduceSpecialIte
 import dev.osmii.shadow.events.custom.roles.modifiers.PacketMakeItemsUndifferentiable
 import dev.osmii.shadow.events.custom.roles.modifiers.PacketMakeItemsUndifferentiableSingle
 import dev.osmii.shadow.events.game.*
+import dev.osmii.shadow.game.abilities.shadow.Cooldown
 import dev.osmii.shadow.game.abilities.shadow.CooldownManager
 import dev.osmii.shadow.game.abilities.shadow.PoisonCloud
 import org.bukkit.Bukkit
@@ -44,6 +45,7 @@ class Shadow : JavaPlugin() {
     val spawnedTNTs = ArrayList<UUID>()
     val cooldownManager = CooldownManager(this)
     val abilityManager = HandleAbilities(this)
+    val jesterCooldowns : HashMap<UUID,Cooldown> = HashMap()
 
     val overworld: World
         get() = this.server.worlds[0]

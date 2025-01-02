@@ -12,6 +12,7 @@ import net.kyori.adventure.title.Title
 import org.bukkit.Bukkit
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.scheduler.BukkitTask
+import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.sqrt
@@ -21,23 +22,24 @@ class GameEnd(val shadow: Shadow) {
     private var antiStallTask = AtomicReference<BukkitTask>()
     private var damagerTask = AtomicReference<BukkitTask>()
 
-    fun checkGameEnd() {
+    fun checkGameEnd(justifiedDeadJesters : Set<UUID>) {
         // Check that the game is actually over (overrides if ender dragon was killed)
-        val villagersAlive = AtomicReference(false)
-        val shadowsAlive = AtomicReference(false)
-        shadow.gameState.currentRoles.forEach { (_, role) ->
-            if (role.roleFaction == PlayableFaction.SHADOW) shadowsAlive.set(true)
-            if (role.roleFaction == PlayableFaction.VILLAGE) villagersAlive.set(true)
+        var villagersAlive = false
+        var shadowsAlive = false
+        for(entry in shadow.gameState.currentRoles) {
+            if (entry.value.roleFaction == PlayableFaction.SHADOW) shadowsAlive = true
+            if (entry.value.roleFaction == PlayableFaction.VILLAGE) villagersAlive = true
         }
-        if (villagersAlive.get() && shadowsAlive.get()) return
+        if (villagersAlive && shadowsAlive && justifiedDeadJesters.isEmpty()) return
         if (GamePhase.GAME_IN_PROGRESS != shadow.gameState.currentPhase) return
 
         // Game is over, determine winner
 
         val result = when {
-            !villagersAlive.get() && !shadowsAlive.get() -> GameResult.DRAW
-            !villagersAlive.get() -> GameResult.SHADOW_WINS
-            !shadowsAlive.get() -> GameResult.VILLAGE_WINS
+            justifiedDeadJesters.isNotEmpty() -> GameResult.JESTER_WINS
+            !villagersAlive && !shadowsAlive -> GameResult.DRAW
+            !villagersAlive -> GameResult.SHADOW_WINS
+            !shadowsAlive -> GameResult.VILLAGE_WINS
             else -> GameResult.DRAW
         }
 
@@ -99,6 +101,26 @@ class GameEnd(val shadow: Shadow) {
                             Title.Times.times(TimeUtil.ticks(10), TimeUtil.ticks(70), TimeUtil.ticks(20))
                         )
                     )
+                }
+            }
+            GameResult.JESTER_WINS -> {
+                shadow.server.broadcast(MiniMessage.miniMessage().deserialize("<green>The Jester has won!</green>"))
+
+                shadow.server.onlinePlayers.forEach { p ->
+                    p.showTitle(
+                        Title.title(
+                            MiniMessage.miniMessage().deserialize("<green>Jester Win</green>"),
+                            Component.empty(),
+                            Title.Times.times(TimeUtil.ticks(10), TimeUtil.ticks(70), TimeUtil.ticks(20))
+                        )
+                    )
+                }
+
+                shadow.gameState.originalRoles.forEach { (uuid, role) ->
+                    if (role == PlayableRole.JESTER && justifiedDeadJesters.contains(uuid)) {
+                        if (shadow.server.getPlayer(uuid) == null) return@forEach
+                        shadow.gameState.currentWinners.add(shadow.server.getPlayer(uuid)!!)
+                    }
                 }
             }
         }

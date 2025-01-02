@@ -15,6 +15,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerRespawnEvent
+import java.util.*
 
 class HandleDeath(private val shadow: Shadow) : Listener {
     private var checking = false
@@ -53,16 +54,24 @@ class HandleDeath(private val shadow: Shadow) : Listener {
 
         shadow.gameState.currentRoles[p.uniqueId] = PlayableRole.SPECTATOR
 
+        val possibleJesterCooldown = shadow.jesterCooldowns[p.uniqueId]
+
+        val justifiedDeadJesters : Set<UUID> = mutableSetOf()
+
+        if(possibleJesterCooldown != null) {
+            if(shadow.jesterCooldowns[p.uniqueId]!!.checkCooldown(p) <= 0) {
+                justifiedDeadJesters.plus(p.uniqueId)
+            }
+        }
+
         if (!checking) {
             Bukkit.getScheduler().runTaskLater(shadow, Runnable {
                 checking = false
-                GameEnd(shadow).checkGameEnd()
+                GameEnd(shadow).checkGameEnd(justifiedDeadJesters)
                 GameEnd(shadow).checkAntiStall()
             }, 20)
             checking = true
         }
-
-        shadow.logger.info(shadow.gameState.currentRoles.toString())
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
