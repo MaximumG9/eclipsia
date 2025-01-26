@@ -113,7 +113,8 @@ class HandleAbilities(val shadow: Shadow) : Listener {
         if(playerAbilityHashMap[player.uniqueId] == null || playerAbilityHashMap[player.uniqueId]?.isEmpty() == true) {
             playerAbilityHashMap[player.uniqueId] = arrayListOf()
             shadow.gameState.currentRoles[player.uniqueId]?.abilities?.forEach {
-                playerAbilityHashMap[player.uniqueId]!!.add(it.invoke())
+                val ability = it.invoke()
+                playerAbilityHashMap[player.uniqueId]!!.add(ability)
             }
         }
 
