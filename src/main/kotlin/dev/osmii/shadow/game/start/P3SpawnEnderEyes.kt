@@ -25,10 +25,10 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.util.BoundingBox
 import kotlin.random.Random
 
-const val ENDER_EYE_OVERWORLD_COUNT = 4
-const val ENDER_EYE_STRONGHOLD_COUNT = 4
+const val ENDER_EYE_OVERWORLD_COUNT = 8
+const val ENDER_EYE_STRONGHOLD_COUNT = 0
 const val ENDER_EYE_NETHER_COUNT = 8
-const val ENDER_EYE_NETHER_ROOF_COUNT = 12
+const val ENDER_EYE_NETHER_ROOF_COUNT = 8
 
 class P3SpawnEnderEyes(private val shadow: Shadow) {
     fun spawnEnderEyes() {
@@ -49,6 +49,7 @@ class P3SpawnEnderEyes(private val shadow: Shadow) {
             createEnderEye(loc)
         }
 
+        /*
 
         // Spawn Stronghold Ender Eyes
 
@@ -176,6 +177,8 @@ class P3SpawnEnderEyes(private val shadow: Shadow) {
                 MiniMessage.miniMessage().deserialize("<red> not enough space to spawn stronghold ender eyes </red>")
             )
         }
+
+        */
 
 
         // Spawn Nether Ender Eyes
