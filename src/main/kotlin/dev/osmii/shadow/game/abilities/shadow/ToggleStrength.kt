@@ -2,6 +2,7 @@ package dev.osmii.shadow.game.abilities.shadow
 
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.Namespace
+import dev.osmii.shadow.enums.PlayableRole
 import dev.osmii.shadow.game.abilities.Ability
 import dev.osmii.shadow.util.ItemUtil
 import net.kyori.adventure.text.Component
@@ -64,12 +65,23 @@ class ToggleStrength : Ability {
         strength = !strength
 
 
-        if (strength) player.addPotionEffect(
-            PotionEffect(
-                PotionEffectType.INCREASE_DAMAGE, -1, 0,
-                false, false, true
-            )
-        )
+        if (strength) {
+            if(shadow.isRole(player,PlayableRole.TRIDENT)) {
+                player.addPotionEffect(
+                    PotionEffect(
+                        PotionEffectType.INCREASE_DAMAGE, -1, 1,
+                        false, false, true
+                    )
+                )
+            } else {
+                player.addPotionEffect(
+                    PotionEffect(
+                        PotionEffectType.INCREASE_DAMAGE, -1, 0,
+                        false, false, true
+                    )
+                )
+            }
+        }
         else player.removePotionEffect(PotionEffectType.INCREASE_DAMAGE)
 
         return MiniMessage.miniMessage()
