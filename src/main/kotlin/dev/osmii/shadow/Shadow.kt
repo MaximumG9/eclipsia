@@ -16,13 +16,13 @@ import dev.osmii.shadow.events.custom.abilities.item.sheriff.HandleSheriffBow
 import dev.osmii.shadow.events.custom.abilities.item.trident.HandleTrident
 import dev.osmii.shadow.events.custom.abilities.item.trident.HandleTridentCooldown
 import dev.osmii.shadow.events.custom.abilities.menu.HandleAbilities
+import dev.osmii.shadow.events.custom.roles.HandleJesterHit
 import dev.osmii.shadow.events.custom.roles.PacketHideItemSwitch
 import dev.osmii.shadow.events.custom.roles.PacketKeepGlowing
 import dev.osmii.shadow.events.custom.roles.modifiers.PacketFakeReduceSpecialItemAttackCooldown
 import dev.osmii.shadow.events.custom.roles.modifiers.PacketMakeItemsUndifferentiable
 import dev.osmii.shadow.events.custom.roles.modifiers.PacketMakeItemsUndifferentiableSingle
 import dev.osmii.shadow.events.game.*
-import dev.osmii.shadow.game.abilities.shadow.Cooldown
 import dev.osmii.shadow.game.abilities.shadow.CooldownManager
 import dev.osmii.shadow.game.abilities.shadow.PoisonCloud
 import org.bukkit.Bukkit
@@ -45,7 +45,9 @@ class Shadow : JavaPlugin() {
     val spawnedTNTs = ArrayList<UUID>()
     val cooldownManager = CooldownManager(this)
     val abilityManager = HandleAbilities(this)
-    val jesterCooldowns : HashMap<UUID,Cooldown> = HashMap()
+    val jesterCooldowns : HashMap<UUID,Int> = HashMap()
+    val lastDamagedBy : HashMap<UUID,UUID?> = HashMap()
+    val jesterHitHandler = HandleJesterHit(this)
 
     val overworld: World
         get() = this.server.worlds[0]
@@ -79,6 +81,8 @@ class Shadow : JavaPlugin() {
 
         Bukkit.getPluginManager().registerEvents(HandleAbilityTNTExplosion(this), this)
 
+        Bukkit.getPluginManager().registerEvents(jesterHitHandler, this)
+
         protocolManager!!.addPacketListener(PacketHideItemSwitch(this))
         protocolManager!!.addPacketListener(PacketKeepGlowing(this))
         protocolManager!!.addPacketListener(PacketMakeItemsUndifferentiable(this))
@@ -110,6 +114,13 @@ class Shadow : JavaPlugin() {
             }
         }
         poisonCloudTickerTask.runTaskTimer(this, 0, 1)
+
+        val jesterTicker = object : BukkitRunnable() {
+            override fun run() {
+                jesterHitHandler.tick()
+            }
+        }
+        jesterTicker.runTaskTimer(this, 0, 1)
     }
 
     fun isRoleFaction(player: Player, roleFaction: PlayableFaction) : Boolean {

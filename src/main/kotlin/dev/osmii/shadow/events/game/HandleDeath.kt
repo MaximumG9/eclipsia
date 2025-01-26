@@ -6,10 +6,14 @@ import dev.osmii.shadow.enums.PlayableFaction
 import dev.osmii.shadow.enums.PlayableRole
 import dev.osmii.shadow.game.end.GameEnd
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.TextComponent
+import net.kyori.adventure.text.TranslatableComponent
+import net.kyori.adventure.text.TranslationArgument
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -25,7 +29,9 @@ class HandleDeath(private val shadow: Shadow) : Listener {
     fun onPlayerDeath(e: PlayerDeathEvent) {
         if (shadow.gameState.currentPhase != GamePhase.GAME_IN_PROGRESS) return
 
-        // Hide death message
+        val originalDeathMessage = e.deathMessage()!!
+
+            // Hide death message
         e.deathMessage(null)
 
         // Choose color and role
@@ -52,26 +58,66 @@ class HandleDeath(private val shadow: Shadow) : Listener {
                 }
         )
 
-        shadow.gameState.currentRoles[p.uniqueId] = PlayableRole.SPECTATOR
-
         val possibleJesterCooldown = shadow.jesterCooldowns[p.uniqueId]
 
-        val justifiedDeadJesters : Set<UUID> = mutableSetOf()
+        shadow.logger.info(originalDeathMessage.toString())
 
-        if(possibleJesterCooldown != null) {
-            if(shadow.jesterCooldowns[p.uniqueId]!!.checkCooldown(p) <= 0) {
-                justifiedDeadJesters.plus(p.uniqueId)
+        val killer = traverseToFindPlayers(originalDeathMessage, ArrayList()).lastOrNull()
+
+        var justifiedDeadJester : Optional<UUID> = Optional.empty()
+
+
+        if(killer != null ) {
+            if(shadow.isRole(p,PlayableRole.JESTER)) {
+                if(shadow.isRoleFaction(killer,PlayableFaction.VILLAGE)) {
+                    if(possibleJesterCooldown != null) {
+                        if(possibleJesterCooldown <= 0) {
+                            justifiedDeadJester = Optional.of(p.uniqueId)
+                        }
+                    } else {
+                        justifiedDeadJester = Optional.of(p.uniqueId)
+                    }
+                }
             }
         }
+
+        shadow.gameState.currentRoles[p.uniqueId] = PlayableRole.SPECTATOR
 
         if (!checking) {
             Bukkit.getScheduler().runTaskLater(shadow, Runnable {
                 checking = false
-                GameEnd(shadow).checkGameEnd(justifiedDeadJesters)
+                GameEnd(shadow).checkGameEnd(justifiedDeadJester)
                 GameEnd(shadow).checkAntiStall()
             }, 20)
             checking = true
         }
+    }
+
+    private fun traverseToFindPlayers(baseComponent : Component, players : ArrayList<Player>) : ArrayList<Player> {
+        var component = baseComponent
+
+        if(component is TranslationArgument) {
+            component = component.value() as Component
+        }
+
+        if(component is TextComponent) {
+            val player = shadow.server.getPlayer(component.content())
+            if(player != null) {
+                players.add(player)
+            }
+        }
+
+        if(component is TranslatableComponent) {
+            component.arguments().forEach {
+                traverseToFindPlayers(it.asComponent(),players)
+            }
+        }
+
+        component.children().forEach {
+            traverseToFindPlayers(it,players)
+        }
+
+        return players
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

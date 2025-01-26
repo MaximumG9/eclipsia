@@ -1,7 +1,10 @@
 package dev.osmii.shadow.game.end
 
 import dev.osmii.shadow.Shadow
-import dev.osmii.shadow.enums.*
+import dev.osmii.shadow.enums.GamePhase
+import dev.osmii.shadow.enums.GameResult
+import dev.osmii.shadow.enums.PlayableFaction
+import dev.osmii.shadow.enums.PlayableRole
 import dev.osmii.shadow.util.TimeUtil
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
@@ -10,7 +13,6 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.title.Title
 import org.bukkit.Bukkit
-import org.bukkit.persistence.PersistentDataType
 import org.bukkit.scheduler.BukkitTask
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
@@ -22,7 +24,7 @@ class GameEnd(val shadow: Shadow) {
     private var antiStallTask = AtomicReference<BukkitTask>()
     private var damagerTask = AtomicReference<BukkitTask>()
 
-    fun checkGameEnd(justifiedDeadJesters : Set<UUID>) {
+    fun checkGameEnd(justifiedDeadJesters : Optional<UUID>) {
         // Check that the game is actually over (overrides if ender dragon was killed)
         var villagersAlive = false
         var shadowsAlive = false
@@ -30,13 +32,13 @@ class GameEnd(val shadow: Shadow) {
             if (entry.value.roleFaction == PlayableFaction.SHADOW) shadowsAlive = true
             if (entry.value.roleFaction == PlayableFaction.VILLAGE) villagersAlive = true
         }
-        if (villagersAlive && shadowsAlive && justifiedDeadJesters.isEmpty()) return
+        if (villagersAlive && shadowsAlive && justifiedDeadJesters.isEmpty) return
         if (GamePhase.GAME_IN_PROGRESS != shadow.gameState.currentPhase) return
 
         // Game is over, determine winner
 
         val result = when {
-            justifiedDeadJesters.isNotEmpty() -> GameResult.JESTER_WINS
+            justifiedDeadJesters.isPresent -> GameResult.JESTER_WINS
             !villagersAlive && !shadowsAlive -> GameResult.DRAW
             !villagersAlive -> GameResult.SHADOW_WINS
             !shadowsAlive -> GameResult.VILLAGE_WINS
@@ -109,7 +111,7 @@ class GameEnd(val shadow: Shadow) {
                 shadow.server.onlinePlayers.forEach { p ->
                     p.showTitle(
                         Title.title(
-                            MiniMessage.miniMessage().deserialize("<green>Jester Win</green>"),
+                            Component.text("Jester Win").color(PlayableRole.JESTER.roleColor),
                             Component.empty(),
                             Title.Times.times(TimeUtil.ticks(10), TimeUtil.ticks(70), TimeUtil.ticks(20))
                         )
@@ -117,7 +119,7 @@ class GameEnd(val shadow: Shadow) {
                 }
 
                 shadow.gameState.originalRoles.forEach { (uuid, role) ->
-                    if (role == PlayableRole.JESTER && justifiedDeadJesters.contains(uuid)) {
+                    if (role == PlayableRole.JESTER && justifiedDeadJesters.get() == uuid) {
                         if (shadow.server.getPlayer(uuid) == null) return@forEach
                         shadow.gameState.currentWinners.add(shadow.server.getPlayer(uuid)!!)
                     }
@@ -150,41 +152,13 @@ class GameEnd(val shadow: Shadow) {
         val shadowsAlive =
             shadow.gameState.currentRoles.filter { (_, role) -> role.roleFaction == PlayableFaction.SHADOW }.size
 
-        if (villagersAlive == 1 && shadowsAlive == 1) {
+        if (villagersAlive == shadowsAlive) {
             // Send anti-stall notification
             shadow.server.onlinePlayers.forEach { p ->
                 p.sendMessage(
                     MiniMessage.miniMessage()
-                        .deserialize("<red>There are only 2 players left. In ten minutes, anyone not in the end will begin taking damage.</red>")
+                        .deserialize("<red>There are as many villagers as shadows left. In ten minutes, anyone not in the end will begin taking damage.</red>")
                 )
-            }
-
-            // If last villager is a sheriff, remove their ability to kill
-            shadow.gameState.currentRoles.forEach { (uuid, role) ->
-                if (role.roleFaction == PlayableFaction.VILLAGE && role == PlayableRole.SHERIFF) {
-                    shadow.server.getPlayer(uuid)
-                        ?.sendMessage(
-                            MiniMessage.miniMessage()
-                                .deserialize("<red>You are the last villager alive. You will no longer have your instant kill ability.</red>")
-                        )
-
-                    // Clear sheriff bow from inventory
-                    shadow.server.getPlayer(uuid)?.inventory?.iterator()?.forEach { item ->
-                        if (item != null && item.hasItemMeta() && item.itemMeta!!.persistentDataContainer.has(
-                                Namespace.CUSTOM_ID,
-                                PersistentDataType.STRING
-                            )
-                        ) {
-                            if (item.itemMeta!!.persistentDataContainer.get(
-                                    Namespace.CUSTOM_ID,
-                                    PersistentDataType.STRING
-                                ) == "sheriff-bow"
-                            ) {
-                                shadow.server.getPlayer(uuid)?.inventory?.remove(item)
-                            }
-                        }
-                    }
-                }
             }
 
             val minutes = AtomicInteger(10)
@@ -250,7 +224,7 @@ class GameEnd(val shadow: Shadow) {
                     alternatingColor.get() -> NamedTextColor.RED
                     else -> NamedTextColor.GOLD
                 }
-                if (p.world.name == "world_the_end" || shadow.gameState.currentRoles[p.uniqueId]!!.roleFaction == PlayableFaction.SPECTATOR) return@forEach
+                if (p.world == shadow.server.worlds[2] || shadow.gameState.currentRoles[p.uniqueId]!!.roleFaction == PlayableFaction.SPECTATOR) return@forEach
 
                 Audience.audience(p).sendActionBar(
                     MiniMessage.miniMessage().deserialize("<$color>You are now taking damage. Get to the end!</$color>")

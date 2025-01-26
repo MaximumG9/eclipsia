@@ -48,7 +48,7 @@ enum class PlayableRole(
         "Spectator", "Spectating.", NamedTextColor.GRAY,
         false, listOf()),
 
-    JESTER(PlayableFaction.NEUTRAL, PlayableSubfaction.JESTER, Material.ENDER_EYE,
+    JESTER(PlayableFaction.NEUTRAL, PlayableSubfaction.JESTER, Material.END_CRYSTAL,
         "Jester", "Die to villagers without harming someone", NamedTextColor.LIGHT_PURPLE,
         true, listOf()),
 
