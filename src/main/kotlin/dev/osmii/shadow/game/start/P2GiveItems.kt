@@ -111,6 +111,19 @@ class P2GiveItems(private val shadow: Shadow) {
                 player.inventory.setItem(9, fakeItem)
             }
 
+            if(shadow.hasRoleModifier(player,RoleModifier.THE_HEDGEHOG)) {
+                player.addPotionEffect(PotionEffect(PotionEffectType.SPEED,-1,2,true,false,true))
+            }
+
+            if(shadow.hasRoleModifier(player,RoleModifier.QUICK_START)) {
+                player.inventory.addItem(
+                    ItemStack(Material.STONE_SWORD),
+                    ItemStack(Material.STONE_AXE),
+                    ItemStack(Material.STONE_PICKAXE),
+                    ItemStack(Material.STONE_SHOVEL)
+                )
+            }
+
             val abilitySelector = ItemStack(Material.NETHER_STAR, 1)
             abilitySelector.itemMeta = abilitySelector.itemMeta.apply {
                 if (this == null) return@apply

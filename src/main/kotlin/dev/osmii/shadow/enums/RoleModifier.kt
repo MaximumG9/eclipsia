@@ -9,5 +9,7 @@ enum class RoleModifier(
     val modifierName: String,
     val color: TextColor
 ) {
-    GUESS_WHO(Material.STRUCTURE_VOID,"Guess Who", NamedTextColor.DARK_PURPLE)
+    GUESS_WHO(Material.STRUCTURE_VOID,"Guess Who", NamedTextColor.DARK_PURPLE),
+    THE_HEDGEHOG(Material.LINGERING_POTION,"Shadow The Hedgehog", NamedTextColor.BLACK),
+    QUICK_START(Material.STONE_PICKAXE,"Quick Start", NamedTextColor.GREEN)
 }
