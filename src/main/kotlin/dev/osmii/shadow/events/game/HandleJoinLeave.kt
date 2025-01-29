@@ -39,7 +39,7 @@ class HandleJoinLeave(private val shadow: Shadow) : Listener {
 
         if(!shadow.isRole(e.player,PlayableRole.LOOKER)) {
             shadow.eyes.values.forEach { uuids ->
-                e.player.hideEntity(shadow, shadow.server.getEntity(uuids.second)!!)
+                shadow.server.getEntity(uuids.second)?.let { e.player.hideEntity(shadow, it) }
             }
         }
 
