@@ -18,7 +18,6 @@ import org.bukkit.craftbukkit.v1_20_R3.CraftChunk
 import org.bukkit.entity.Player
 import org.bukkit.generator.structure.StructureType
 import org.bukkit.util.BoundingBox
-import java.lang.IllegalArgumentException
 import kotlin.math.cos
 import kotlin.math.sin
 
