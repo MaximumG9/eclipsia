@@ -154,7 +154,7 @@ class HandleAbilities(val shadow: Shadow) : Listener {
 
         val returnText = ability.apply(player,shadow)
 
-        if(!shadow.hasRoleModifier(player,RoleModifier.GUESS_WHO))
+        if(!shadow.hasRoleModifier(player,RoleModifier.GUESS_WHO) && returnText != null)
             player.sendMessage(returnText)
 
         e.isCancelled = true

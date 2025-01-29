@@ -10,5 +10,5 @@ interface Ability {
 
     val id: String
 
-    fun apply(player: Player, shadow: Shadow) : Component
+    fun apply(player: Player, shadow: Shadow) : Component?
 }
