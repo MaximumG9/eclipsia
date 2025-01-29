@@ -1,11 +1,11 @@
 package dev.osmii.shadow.enums
 
-import dev.osmii.shadow.config.AbilityTestConfig
+import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.game.abilities.Ability
 import dev.osmii.shadow.game.abilities.shadow.ToggleStrength
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Material
-import kotlin.reflect.KFunction0
+import kotlin.reflect.KFunction1
 
 enum class PlayableRole(
     val roleFaction: PlayableFaction,
@@ -15,7 +15,7 @@ enum class PlayableRole(
     val roleDescription: String,
     val roleColor: NamedTextColor,
     val isUnique: Boolean = false,
-    val abilities: List<KFunction0<Ability>>
+    val abilities: List<KFunction1<Shadow,Ability>>
 ) {
     VILLAGER(PlayableFaction.VILLAGE, PlayableSubfaction.VILLAGE_SUPPORT, Material.EMERALD, "" +
             "Villager", "Work together to beat the game.", NamedTextColor.GREEN,
@@ -26,7 +26,7 @@ enum class PlayableRole(
         false, listOf()),
     SHADOW(PlayableFaction.SHADOW, PlayableSubfaction.SHADOW_KILLING, Material.NETHERITE_SWORD,
         "Shadow", "Protect the dragon and kill the villagers.", NamedTextColor.RED,
-        false, listOf(AbilityTestConfig::getShadowSecondAbility, ::ToggleStrength)),
+        false, listOf(ShadowTestAbilities::getShadowSecondAbility, ::ToggleStrength)),
 
     LIFEWEAVER(PlayableFaction.VILLAGE, PlayableSubfaction.VILLAGE_PROTECTIVE, Material.GOLDEN_APPLE,
         "Lifeweaver", "Donate your health to others.", NamedTextColor.DARK_AQUA,

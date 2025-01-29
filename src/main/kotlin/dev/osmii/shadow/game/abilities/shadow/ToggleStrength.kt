@@ -15,7 +15,7 @@ import org.bukkit.persistence.PersistentDataType
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
-class ToggleStrength : Ability {
+class ToggleStrength(val shadow: Shadow) : Ability {
     override val item: ItemStack = ItemStack(Material.POTION)
 
     override val id = "ASSASSINATE"

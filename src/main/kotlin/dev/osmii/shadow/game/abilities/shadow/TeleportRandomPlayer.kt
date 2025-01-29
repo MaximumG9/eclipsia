@@ -12,7 +12,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 
-class TeleportRandomPlayer : Ability {
+class TeleportRandomPlayer(val shadow: Shadow) : Ability {
     override val item: ItemStack = ItemStack(Material.WATER_BUCKET)
     override val id = "BEGONE"
 
@@ -23,7 +23,7 @@ class TeleportRandomPlayer : Ability {
             this.lore(
                 listOf(
                     MiniMessage.miniMessage()
-                        .deserialize("<!i><gray>Teleport a random player within </gray><blue>18</blue> <gray>blocks of you 30 blocks above the surface</gray></!i>")
+                        .deserialize("<!i><gray>Teleport a random player within </gray><blue>18</blue> <gray>blocks of you ${shadow.config.tntExplodeTicks} blocks above the surface</gray></!i>")
                 )
             )
             this.persistentDataContainer.set(
@@ -58,7 +58,7 @@ class TeleportRandomPlayer : Ability {
             val target = targets.random()
 
             val teleportPosition = target.world.getHighestBlockAt(target.location).location
-            target.teleport(teleportPosition.add(0.0, HEIGHT_ABOVE_GROUND,0.0))
+            target.teleport(teleportPosition.add(0.0, shadow.config.teleportHeight,0.0))
 
             target.location.world.strikeLightningEffect(target.location)
             cooldown.resetCooldown(player)
@@ -68,9 +68,5 @@ class TeleportRandomPlayer : Ability {
         } else {
             return MiniMessage.miniMessage().deserialize("<red>No nearby players to teleport.</red>")
         }
-    }
-
-    companion object {
-        var HEIGHT_ABOVE_GROUND = 30.0
     }
 }

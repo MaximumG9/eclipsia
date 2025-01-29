@@ -1,6 +1,6 @@
 package dev.osmii.shadow.enums
 
-import dev.osmii.shadow.config.AbilityTestConfig
+import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.game.abilities.Ability
 import dev.osmii.shadow.game.abilities.shadow.*
 import kotlin.reflect.KClass
@@ -12,5 +12,17 @@ enum class ShadowTestAbilities(val constructor: KFunction<Ability>, val clazz : 
     CULL(::ScalingDamageAll, ScalingDamageAll::class),
     BEGONE(::TeleportRandomPlayer, TeleportRandomPlayer::class),
     TNT(::SpawnTntRandomPlayer, SpawnTntRandomPlayer::class),
-    RANDOM(AbilityTestConfig::getRandomValue, KillOneNearby::class);
+    RANDOM(ShadowTestAbilities::getRandomAbility, KillOneNearby::class);
+
+    fun getRandomAbility(): Ability {
+        val value = ShadowTestAbilities.entries.random()
+        return value.constructor.call()
+    }
+
+    companion object {
+        fun getShadowSecondAbility(shadow: Shadow): Ability {
+            return shadow.config.shadowAbility.
+            constructor.call()
+        }
+    }
 }

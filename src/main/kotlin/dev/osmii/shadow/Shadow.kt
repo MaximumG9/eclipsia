@@ -3,6 +3,7 @@ package dev.osmii.shadow
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
 import dev.osmii.shadow.commands.*
+import dev.osmii.shadow.config.Config
 import dev.osmii.shadow.enums.PlayableFaction
 import dev.osmii.shadow.enums.PlayableRole
 import dev.osmii.shadow.enums.RoleModifier
@@ -38,6 +39,7 @@ import java.util.logging.Logger
 
 class Shadow : JavaPlugin() {
     val gameState: ShadowGameState = ShadowGameState()
+    val config = Config()
     private var protocolManager: ProtocolManager? = null
     var strongholdBoundingBox: BoundingBox? = null
     val eyes: HashMap<UUID, Pair<UUID,UUID>> = HashMap() // Second is Looker armor stand

@@ -14,7 +14,7 @@ import org.bukkit.entity.TNTPrimed
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 
-class SpawnTntRandomPlayer : Ability {
+class SpawnTntRandomPlayer(val shadow : Shadow) : Ability {
     override val item: ItemStack = ItemStack(Material.TNT)
 
     override val id = "NUKE"
@@ -26,7 +26,7 @@ class SpawnTntRandomPlayer : Ability {
             this.lore(
                 listOf(
                     MiniMessage.miniMessage()
-                        .deserialize("<!i><gray>Spawn tnt on a random player within</gray> <blue>18</blue> <gray>blocks. That explodes within ${TICKS_TO_EXPLODE/20.0}</!i>")
+                        .deserialize("<!i><gray>Spawn tnt on a random player within</gray> <blue>18</blue> <gray>blocks. That explodes within ${TimeUtil.ticksToText(shadow.config.tntExplodeTicks)}</!i>")
                 )
             )
             this.persistentDataContainer.set(
@@ -60,7 +60,7 @@ class SpawnTntRandomPlayer : Ability {
 
             val tnt : TNTPrimed = killed.world.spawnEntity(killed.location, EntityType.PRIMED_TNT) as TNTPrimed
 
-            tnt.fuseTicks = TICKS_TO_EXPLODE
+            tnt.fuseTicks = shadow.config.tntExplodeTicks
 
             killed.location.world.strikeLightningEffect(killed.location)
 
@@ -74,10 +74,5 @@ class SpawnTntRandomPlayer : Ability {
         } else {
             return MiniMessage.miniMessage().deserialize("<red>No nearby players to summon TNT on.</red>")
         }
-    }
-
-    companion object {
-        var TICKS_TO_EXPLODE = 30
-        private const val COOLDOWN_KEY = "spawntnt"
     }
 }

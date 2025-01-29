@@ -93,13 +93,4 @@ class SummonPoisonCloud : Ability {
                 )
         }
     }
-
-    companion object {
-        var RADIUS = 10.0
-        var POISON_DURATION = 200
-        var POISON_AMPLIFIER = 2
-        var CLOUD_VIEW_DISTANCE = 32.0
-        var PARTICLES_PER_TICK = 100
-        var LIFETIME = 3 * 60 * 20
-    }
 }

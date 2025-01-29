@@ -14,12 +14,8 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import dev.osmii.shadow.Shadow
-import dev.osmii.shadow.config.AbilityTestConfig
+import dev.osmii.shadow.enums.Foods
 import dev.osmii.shadow.enums.ShadowTestAbilities
-import dev.osmii.shadow.game.abilities.shadow.ScalingDamageAll
-import dev.osmii.shadow.game.abilities.shadow.SpawnTntRandomPlayer
-import dev.osmii.shadow.game.abilities.shadow.SummonPoisonCloud
-import dev.osmii.shadow.game.abilities.shadow.TeleportRandomPlayer
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands.argument
 import net.minecraft.commands.Commands.literal
@@ -37,7 +33,9 @@ class CommandConfig(val shadow: Shadow) {
                                 .suggests(this::suggestAbility)
                                 .executes { context ->
                                     val ability = getAbility(context,"Ability")
-                                    AbilityTestConfig.setAbility(ability)
+
+                                    shadow.config.shadowAbility = ability
+
                                     context.source.sendSuccess({Component.literal("Set second shadow ability to $ability")}, true)
                                     return@executes 0
                                 }
@@ -49,7 +47,9 @@ class CommandConfig(val shadow: Shadow) {
                             argument("Radius",doubleArg(0.0))
                                 .executes { context ->
                                     val radius = getDouble(context,"Radius")
-                                    SummonPoisonCloud.RADIUS = radius
+
+                                    shadow.config.poisonCloudRadius = radius
+
                                     context.source.sendSuccess({Component.literal("Set poison cloud radius to $radius")}, true)
                                     return@executes radius.toInt()
                                 }
@@ -61,7 +61,9 @@ class CommandConfig(val shadow: Shadow) {
                             argument("Duration in ticks", integer(0))
                                 .executes { context ->
                                     val duration = getInteger(context,"Duration in ticks")
-                                    SummonPoisonCloud.LIFETIME = duration
+
+                                    shadow.config.poisonCloudDuration = duration
+
                                     context.source.sendSuccess({Component.literal("Set poison cloud duration to $duration")}, true)
                                     return@executes duration
                                 }
@@ -73,7 +75,9 @@ class CommandConfig(val shadow: Shadow) {
                             argument("Particle Count", integer(0))
                                 .executes { context ->
                                     val count = getInteger(context,"Particle Count")
-                                    SummonPoisonCloud.PARTICLES_PER_TICK = count
+
+                                    shadow.config.poisonCloudParticlesPerTick = count
+
                                     context.source.sendSuccess({Component.literal("Set poison cloud particles per tick to $count")}, true)
                                     return@executes count
                                 }
@@ -85,7 +89,9 @@ class CommandConfig(val shadow: Shadow) {
                             argument("View Distance", doubleArg(0.0))
                                 .executes { context ->
                                     val distance = getDouble(context,"View Distance")
-                                    SummonPoisonCloud.CLOUD_VIEW_DISTANCE = distance
+
+                                    shadow.config.poisonCloudViewDistance = distance
+
                                     context.source.sendSuccess({Component.literal("Set poison cloud view distance to $distance")}, true)
                                     return@executes distance.toInt()
                                 }
@@ -97,7 +103,9 @@ class CommandConfig(val shadow: Shadow) {
                             argument("Duration in ticks", integer(0))
                                 .executes { context ->
                                     val duration = getInteger(context,"Duration in ticks")
-                                    SummonPoisonCloud.POISON_DURATION = duration
+
+                                    shadow.config.poisonEffectDuration = duration
+
                                     context.source.sendSuccess({Component.literal("Set poison cloud effect duration to $duration")}, true)
                                     return@executes duration
                                 }
@@ -109,7 +117,9 @@ class CommandConfig(val shadow: Shadow) {
                             argument("Amplifier", integer(0))
                                 .executes { context ->
                                     val amplifier = getInteger(context,"Amplifier")
-                                    SummonPoisonCloud.POISON_AMPLIFIER = amplifier
+
+                                    shadow.config.poisonEffectAmplifier = amplifier
+
                                     context.source.sendSuccess({Component.literal("Set poison cloud effect amplifier to $amplifier")}, true)
                                     return@executes amplifier
                                 }
@@ -121,7 +131,9 @@ class CommandConfig(val shadow: Shadow) {
                             argument("Ticks", integer(0))
                                 .executes { context ->
                                 val ticks = getInteger(context,"Ticks")
-                                SpawnTntRandomPlayer.TICKS_TO_EXPLODE = ticks
+
+                                shadow.config.tntExplodeTicks = ticks
+
                                 context.source.sendSuccess({Component.literal("Set tnt explode ticks to $ticks")}, true)
                                 return@executes ticks
                             }
@@ -133,7 +145,9 @@ class CommandConfig(val shadow: Shadow) {
                             argument("Height", doubleArg(0.0))
                                 .executes { context ->
                                     val height = getDouble(context,"Height")
-                                    TeleportRandomPlayer.HEIGHT_ABOVE_GROUND = height
+
+                                    shadow.config.teleportHeight = height
+
                                     context.source.sendSuccess({Component.literal("Set teleport height to $height blocks")}, true)
                                     return@executes height.toInt()
                                 }
@@ -149,7 +163,9 @@ class CommandConfig(val shadow: Shadow) {
                                         .executes { context ->
                                             val ability = getAbility(context,"Ability")
                                             val cooldown = getInteger(context,"Cooldown")
+
                                             shadow.cooldownManager.getCooldown(ability.clazz).cooldown = cooldown
+
                                             context.source.sendSuccess({Component.literal("Set cooldown for $ability to $cooldown ticks")}, true)
                                             return@executes cooldown
                                         }
@@ -167,7 +183,9 @@ class CommandConfig(val shadow: Shadow) {
                                         .executes { context ->
                                             val ability = getAbility(context,"Ability")
                                             val cooldown = getInteger(context,"Cooldown")
+
                                             shadow.cooldownManager.getCooldown(ability.clazz).initialCooldown = cooldown
+
                                             context.source.sendSuccess({Component.literal("Set initial cooldown for $ability to $cooldown ticks")}, true)
                                             return@executes cooldown
                                         }
@@ -180,17 +198,65 @@ class CommandConfig(val shadow: Shadow) {
                             argument("newState", bool())
                                 .executes { context ->
                                     val newState = getBool(context,"newState")
-                                    ScalingDamageAll.toggleScalingDamageAllNightly = newState
-                                    context.source.sendSuccess({Component.literal("Set cullNightly to ${newState}")}, true)
+
+                                    shadow.config.cullNightly = newState
+
+                                    context.source.sendSuccess({Component.literal("Set cullNightly to $newState")}, true)
                                     return@executes if (newState) 1 else 0
                                 }
                         )
                         .executes { context ->
-                            context.source.sendSuccess({Component.literal("CullNightly is ${ScalingDamageAll.toggleScalingDamageAllNightly}")}, true)
-                            return@executes if (ScalingDamageAll.toggleScalingDamageAllNightly) 1 else 0
+                            context.source.sendSuccess({Component.literal("CullNightly is ${shadow.config.cullNightly}")}, true)
+                            return@executes if (shadow.config.cullNightly) 1 else 0
                         }
                 )
+                .then(
+                    literal("food")
+                        .then(
+                            argument("Food", string())
+                                .suggests(this::suggestFood)
+                                .executes { context ->
+                                    val food = getFood(context,"Food")
+
+                                    shadow.config.food = food
+
+                                    context.source.sendSuccess({Component.literal("Set food to ${food.name}")}, true)
+                                    return@executes 0
+                                }
+                        )
+                )
+                .then(
+                    literal("foodAmount")
+                        .then(
+                            argument("foodAmount", integer(0,64))
+                                .executes { context ->
+                                    val amount = getInteger(context,"foodAmount")
+
+                                    shadow.config.foodAmount = amount
+
+                                    context.source.sendSuccess({Component.literal("Set food amount to $amount")}, true)
+                                    return@executes amount
+                                }
+                        )
+                )
         )
+    }
+
+    private fun getFood(ctx: CommandContext<CommandSourceStack>, name: String) : Foods {
+        try {
+            return Foods.valueOf(ctx.getArgument(name, String::class.java))
+        } catch (e : IllegalArgumentException) {
+            throw INVALID_FOOD_EXCEPTION_TYPE.create(name)
+        }
+    }
+
+    private fun suggestFood(ctx : CommandContext<CommandSourceStack>, builder: SuggestionsBuilder) : CompletableFuture<Suggestions> {
+        Foods.entries.map {a -> a.name}.plus("RANDOM").filter {
+            it.startsWith(builder.remaining,false)
+        }.forEach {
+            builder.suggest(it)
+        }
+        return builder.buildFuture()
     }
 
     private fun getAbility(ctx: CommandContext<CommandSourceStack>, name: String) : ShadowTestAbilities {
@@ -214,6 +280,10 @@ class CommandConfig(val shadow: Shadow) {
         private val INVALID_ABILITY_EXCEPTION_TYPE =
             DynamicCommandExceptionType {
                 value -> LiteralMessage("Ability $value does not exist.")
+            }
+        private val INVALID_FOOD_EXCEPTION_TYPE =
+            DynamicCommandExceptionType {
+                    value -> LiteralMessage("Ability $value does not exist.")
             }
     }
 }

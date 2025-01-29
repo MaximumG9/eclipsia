@@ -12,7 +12,7 @@ import kotlin.math.sqrt
 import kotlin.random.Random
 
 class PoisonCloud(val shadow : Shadow, val location: Location) {
-    private var ticksLeft = SummonPoisonCloud.LIFETIME
+    private var ticksLeft = shadow.config.poisonCloudDuration
     fun tick() {
         if(ticksLeft <= 0) {
             shadow.poisonClouds.remove(this)
@@ -21,18 +21,18 @@ class PoisonCloud(val shadow : Shadow, val location: Location) {
             if(it.world == location.world) {
 
                 // Give Poison Effect
-                if(it.location.distanceSquared(location) < SummonPoisonCloud.RADIUS*SummonPoisonCloud.RADIUS) {
+                if(it.location.distanceSquared(location) < shadow.config.poisonCloudRadius*shadow.config.poisonCloudRadius) {
                     val potentionalPoisonEffect =  it.getPotionEffect(PotionEffectType.POISON)
 
                     if( !(potentionalPoisonEffect != null &&
-                        potentionalPoisonEffect.duration + 20 > SummonPoisonCloud.POISON_DURATION &&
-                        potentionalPoisonEffect.amplifier >= SummonPoisonCloud.POISON_AMPLIFIER
+                        potentionalPoisonEffect.duration + 20 > shadow.config.poisonEffectDuration &&
+                        potentionalPoisonEffect.amplifier >= shadow.config.poisonEffectAmplifier
                                 )) {
                         it.addPotionEffect(
                             PotionEffect(
                                 PotionEffectType.POISON,
-                                SummonPoisonCloud.POISON_DURATION,
-                                SummonPoisonCloud.POISON_AMPLIFIER,
+                                shadow.config.poisonEffectDuration,
+                                shadow.config.poisonEffectAmplifier,
                                 false,
                                 true,
                                 true
@@ -45,14 +45,14 @@ class PoisonCloud(val shadow : Shadow, val location: Location) {
                         val potentionalRegenEffect = it.getPotionEffect(PotionEffectType.REGENERATION)
 
                         if( potentionalRegenEffect == null ||
-                            (potentionalRegenEffect.duration + 20 < SummonPoisonCloud.POISON_DURATION &&
-                            potentionalRegenEffect.amplifier <= SummonPoisonCloud.POISON_AMPLIFIER + 1)
+                            (potentionalRegenEffect.duration + 20 < shadow.config.poisonEffectDuration &&
+                            potentionalRegenEffect.amplifier <= shadow.config.poisonEffectAmplifier + 1)
                         ) {
                             it.addPotionEffect(
                                 PotionEffect(
                                     PotionEffectType.REGENERATION,
-                                    SummonPoisonCloud.POISON_DURATION,
-                                    SummonPoisonCloud.POISON_AMPLIFIER + 1,
+                                    shadow.config.poisonEffectDuration,
+                                    shadow.config.poisonEffectAmplifier + 1,
                                     false,
                                     true,
                                     true
@@ -64,15 +64,15 @@ class PoisonCloud(val shadow : Shadow, val location: Location) {
                 }
 
                 // Spawn Particles
-                if(it.location.distanceSquared(location) < SummonPoisonCloud.CLOUD_VIEW_DISTANCE * SummonPoisonCloud.CLOUD_VIEW_DISTANCE) {
+                if(it.location.distanceSquared(location) < shadow.config.poisonCloudViewDistance * shadow.config.poisonCloudViewDistance) {
                     val particle: Particle = Particle.SPELL_MOB
 
-                    for(i in 0..SummonPoisonCloud.PARTICLES_PER_TICK) {
+                    for(i in 0..shadow.config.poisonCloudParticlesPerTick) {
 
                         val pitch = Random.nextDouble() * TAU
                         val yaw = Random.nextDouble() * TAU
 
-                        val magnitude = adjust(Random.nextDouble()) * SummonPoisonCloud.RADIUS
+                        val magnitude = adjust(Random.nextDouble()) * shadow.config.poisonCloudRadius
 
                         val x = cos(pitch) * sin(yaw) * magnitude
                         val z = cos(yaw) * cos(pitch) * magnitude

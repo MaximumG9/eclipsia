@@ -40,7 +40,7 @@ class ScalingDamageAll : Ability {
     }
 
     override fun apply(player: Player, shadow: Shadow) : Component {
-        if(toggleScalingDamageAllNightly) {
+        if(shadow.config.cullNightly) {
             if(shadow.overworld.isDayTime) {
                 return MiniMessage.miniMessage()
                     .deserialize("<red>This ability cannot be used during daytime.</red>")
@@ -107,7 +107,7 @@ class ScalingDamageAll : Ability {
                 it.damage(0.1)
                 it.sendHealthUpdate()
             }
-            if(!toggleScalingDamageAllNightly) {
+            if(!shadow.config.cullNightly) {
                 cooldown.resetCooldown(player)
             }
             return returnComponent
@@ -127,7 +127,5 @@ class ScalingDamageAll : Ability {
             playerCountToDamageList.add(12.0)
             playerCountToDamageList.add(19.0)
         }
-
-        var toggleScalingDamageAllNightly = true
     }
 }
