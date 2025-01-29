@@ -152,7 +152,7 @@ class GameEnd(val shadow: Shadow) {
         val shadowsAlive =
             shadow.gameState.currentRoles.filter { (_, role) -> role.roleFaction == PlayableFaction.SHADOW }.size
 
-        if (villagersAlive == shadowsAlive) {
+        if (villagersAlive == shadowsAlive && timerTask.get() == null) {
             // Send anti-stall notification
             shadow.server.onlinePlayers.forEach { p ->
                 p.sendMessage(
