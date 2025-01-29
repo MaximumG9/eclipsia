@@ -124,6 +124,13 @@ class P1AssignRoles(private val shadow: Shadow) {
                 )
             }
 
+            val playerModifiers = shadow.gameState.currentRoleModifiers[uuid]
+            if(playerModifiers != null) {
+                player.sendMessage(playerModifiers.fold(Component.text("Your modifiers are: ").color(NamedTextColor.GRAY)) { r, t ->
+                    r.append(Component.text(t.name).color(t.color))
+                })
+            }
+
 
             // Set gamemodes
             if (role != PlayableRole.SPECTATOR) player.gameMode = GameMode.SURVIVAL
