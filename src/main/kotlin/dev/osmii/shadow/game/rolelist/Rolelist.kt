@@ -30,7 +30,7 @@ class Rolelist {
             selector.copyToMutableRoles()
         }
 
-
+        this.roles.shuffle()
 
         for (sel in this.roles) {
             Shadow.logger?.info("1: ${sel.roles}")
