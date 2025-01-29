@@ -3,6 +3,7 @@ package dev.osmii.shadow.game.start
 import dev.osmii.shadow.Shadow
 import org.bukkit.GameMode
 import org.bukkit.advancement.AdvancementProgress
+import org.bukkit.attribute.Attribute
 
 class L0ResetStates(private val shadow: Shadow) {
     fun resetStates() {
@@ -22,7 +23,7 @@ class L0ResetStates(private val shadow: Shadow) {
         shadow.server.onlinePlayers.forEach { player ->
             // Reset player data
             player.gameMode = GameMode.ADVENTURE
-            player.health = 20.0
+            player.health = player.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.value
             player.foodLevel = 20
             player.saturation = 20.0f
             player.exp = 0.0f
