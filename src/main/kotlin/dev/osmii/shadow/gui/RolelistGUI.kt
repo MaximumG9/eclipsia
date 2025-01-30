@@ -1,7 +1,8 @@
-package dev.osmii.shadow.game.rolelist
+package dev.osmii.shadow.gui
 
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.*
+import dev.osmii.shadow.util.ItemUtil
 import net.kyori.adventure.inventory.Book
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
@@ -18,6 +19,36 @@ import org.bukkit.persistence.PersistentDataType
 import java.util.*
 
 class RolelistGUI(private val shadow: Shadow) {
+
+    fun showGuessRoleInventory(player: Player, callback : (player: Player, role: PlayableRole) -> Unit) {
+        val inv = Bukkit.createInventory(null, 54, Component.text("Guess Role").color(NamedTextColor.DARK_RED))
+
+        PlayableRole.entries.forEach { role ->
+            if (role == PlayableRole.SPECTATOR) return@forEach
+            val item = ItemStack(role.roleIcon)
+            item.itemMeta = item.itemMeta.apply {
+                displayName(Component.text(role.roleName).color(role.roleColor))
+                persistentDataContainer.set(Namespace.CUSTOM_ID, PersistentDataType.STRING, CID.ROLE_SELECT_GUESS_ROLE)
+                persistentDataContainer.set(
+                    Namespace.ROLE_SELECT_GUESS_ROLE,
+                    PersistentDataType.STRING,
+                    role.name
+                )
+                addItemFlags(ItemFlag.HIDE_ITEM_SPECIFICS, ItemFlag.HIDE_ATTRIBUTES)
+            }
+            inv.addItem(item)
+        }
+
+        player.openInventory(inv)
+
+        shadow.guiCallbacks[inv] = { _, inventory, item ->
+            if (ItemUtil.customIdIs(item, CID.ROLE_SELECT_GUESS_ROLE)) {
+                val roleName = item.itemMeta.persistentDataContainer[Namespace.ROLE_SELECT_GUESS_ROLE,PersistentDataType.STRING]
+                val role = PlayableRole.valueOf(roleName!!)
+                callback.invoke(player,role)
+            }
+        }
+    }
 
     fun showAddRoleInventory(player: Player) {
         val inv = Bukkit.createInventory(null, 54, Component.text("Add Role").color(NamedTextColor.BLUE))

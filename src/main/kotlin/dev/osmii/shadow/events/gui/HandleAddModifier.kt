@@ -1,4 +1,4 @@
-package dev.osmii.shadow.events.custom
+package dev.osmii.shadow.events.gui
 
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.CID

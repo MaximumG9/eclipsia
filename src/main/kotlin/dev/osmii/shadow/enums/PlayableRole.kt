@@ -2,6 +2,7 @@ package dev.osmii.shadow.enums
 
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.game.abilities.Ability
+import dev.osmii.shadow.game.abilities.shadow.GuessRole
 import dev.osmii.shadow.game.abilities.shadow.ToggleStrength
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Material
@@ -30,17 +31,17 @@ enum class PlayableRole(
 
     LIFEWEAVER(PlayableFaction.VILLAGE, PlayableSubfaction.VILLAGE_PROTECTIVE, Material.GOLDEN_APPLE,
         "Lifeweaver", "Donate your health to others.", NamedTextColor.DARK_AQUA,
-        true, listOf()),
+        false, listOf()),
     CORONER(PlayableFaction.VILLAGE, PlayableSubfaction.VILLAGE_INVESTIGATIVE, Material.SHEARS,
         "Coroner", "Inspect bodies and uncover death causes.", NamedTextColor.GREEN,
-        true, listOf()),
+        false, listOf()),
     LOOKER(PlayableFaction.VILLAGE, PlayableSubfaction.VILLAGE_SUPPORT, Material.ENDER_EYE,
         "Seer (Looker)", "Ender eyes glow", NamedTextColor.GREEN,
-        true, listOf()),
+        false, listOf()),
 
     ORACLE(PlayableFaction.SHADOW, PlayableSubfaction.SHADOW_KILLING, Material.BEACON,
-        "Oracle", "Kill others by guessing their role.", NamedTextColor.RED,
-        true, listOf()),
+        "Oracle", "Kill others by guessing their role.", NamedTextColor.DARK_PURPLE,
+        false, listOf(::GuessRole)),
     TRIDENT(PlayableFaction.SHADOW, PlayableSubfaction.SHADOW_KILLING, Material.TRIDENT,
         "Poseidon's Wrath", "Use your trident to wipe out the villagers", NamedTextColor.BLUE,
         false, listOf(::ToggleStrength)),
@@ -50,7 +51,7 @@ enum class PlayableRole(
 
     JESTER(PlayableFaction.NEUTRAL, PlayableSubfaction.JESTER, Material.END_CRYSTAL,
         "Jester", "Die to villagers without harming someone", NamedTextColor.LIGHT_PURPLE,
-        true, listOf()),
+        false, listOf()),
 
 
 }

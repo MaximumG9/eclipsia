@@ -8,8 +8,6 @@ import dev.osmii.shadow.enums.PlayableFaction
 import dev.osmii.shadow.enums.PlayableRole
 import dev.osmii.shadow.enums.RoleModifier
 import dev.osmii.shadow.events.HandleItemInteractionRestrict
-import dev.osmii.shadow.events.custom.HandleAddModifier
-import dev.osmii.shadow.events.custom.HandleAddRole
 import dev.osmii.shadow.events.custom.HandleDayNight
 import dev.osmii.shadow.events.custom.HandleParticipationToggle
 import dev.osmii.shadow.events.custom.abilities.HandleAbilityTNTExplosion
@@ -24,12 +22,17 @@ import dev.osmii.shadow.events.custom.roles.modifiers.PacketFakeReduceSpecialIte
 import dev.osmii.shadow.events.custom.roles.modifiers.PacketMakeItemsUndifferentiable
 import dev.osmii.shadow.events.custom.roles.modifiers.PacketMakeItemsUndifferentiableSingle
 import dev.osmii.shadow.events.game.*
+import dev.osmii.shadow.events.gui.HandleAddModifier
+import dev.osmii.shadow.events.gui.HandleAddRole
+import dev.osmii.shadow.events.gui.HandleGUICallback
 import dev.osmii.shadow.game.abilities.shadow.CooldownManager
 import dev.osmii.shadow.game.abilities.shadow.PoisonCloud
 import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.craftbukkit.v1_20_R3.CraftServer
 import org.bukkit.entity.Player
+import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scoreboard.Team
@@ -48,7 +51,8 @@ class Shadow : JavaPlugin() {
     val cooldownManager = CooldownManager(this)
     val abilityManager = HandleAbilities(this)
     val jesterCooldowns : HashMap<UUID,Int> = HashMap()
-    val lastDamagedBy : HashMap<UUID,UUID?> = HashMap()
+    val guiCallbacks : HashMap<Inventory,(player: Player, inventory: Inventory, itemstack: ItemStack) -> Unit> = HashMap()
+    val guessRoleCallbacks : HashMap<Inventory,(player: Player, role: PlayableRole) -> Unit> = HashMap()
     val jesterHitHandler = HandleJesterHit(this)
 
     val overworld: World
@@ -76,6 +80,7 @@ class Shadow : JavaPlugin() {
         Bukkit.getPluginManager().registerEvents(HandleParticipationToggle(this), this)
         Bukkit.getPluginManager().registerEvents(HandleAddRole(this), this)
         Bukkit.getPluginManager().registerEvents(HandleAddModifier(this), this)
+        Bukkit.getPluginManager().registerEvents(HandleGUICallback(this), this)
         Bukkit.getPluginManager().registerEvents(abilityManager, this)
         Bukkit.getPluginManager().registerEvents(HandleEyePickup(this), this)
 

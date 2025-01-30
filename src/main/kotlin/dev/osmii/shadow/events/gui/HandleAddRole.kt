@@ -1,9 +1,9 @@
-package dev.osmii.shadow.events.custom
+package dev.osmii.shadow.events.gui
 
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.*
-import dev.osmii.shadow.game.rolelist.RolelistGUI
 import dev.osmii.shadow.game.rolelist.RolelistSelector
+import dev.osmii.shadow.gui.RolelistGUI
 import dev.osmii.shadow.util.ItemUtil
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player

@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 
 
-class ScalingDamageAll : Ability {
+class ScalingDamageAll(val shadow: Shadow) : Ability {
     override val item: ItemStack = ItemStack(Material.NETHERITE_SWORD)
 
     override val id = "CULL"

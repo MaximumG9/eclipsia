@@ -12,7 +12,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 
-class KillOneNearby : Ability {
+class KillOneNearby(var shadow: Shadow) : Ability {
     override val item: ItemStack = ItemStack(Material.NETHERITE_SWORD)
 
     override val id = "ASSASSINATE"

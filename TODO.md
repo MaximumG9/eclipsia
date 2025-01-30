@@ -3,7 +3,7 @@
 - [x] GUESS WHO MODIFIER
 - [x] KRILL ONLY DURING NIGHT
 - [x] Looker Objective Information Buff - Thing likes this (ender eyes glow) (BETTER THAN other seer idea)
-- [ ] Little Timmy
+- [ ] Little Timmy - Gets progressive fortune for each ore mined for that ore specifically 
 - [ ] Mole
 - [ ] Jester?
 - [ ] NIGHTBRINGER

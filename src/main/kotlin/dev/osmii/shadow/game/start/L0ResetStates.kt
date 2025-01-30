@@ -1,6 +1,7 @@
 package dev.osmii.shadow.game.start
 
 import dev.osmii.shadow.Shadow
+import dev.osmii.shadow.game.end.GameEnd
 import org.bukkit.GameMode
 import org.bukkit.advancement.AdvancementProgress
 import org.bukkit.attribute.Attribute
@@ -13,6 +14,8 @@ class L0ResetStates(private val shadow: Shadow) {
         overworld.fullTime = 0
         overworld.setStorm(false)
         overworld.isThundering = false
+
+        GameEnd.timerStarted = false
 
         shadow.abilityManager.clear()
 

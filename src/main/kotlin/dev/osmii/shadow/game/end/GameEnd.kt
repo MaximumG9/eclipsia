@@ -152,7 +152,7 @@ class GameEnd(val shadow: Shadow) {
         val shadowsAlive =
             shadow.gameState.currentRoles.filter { (_, role) -> role.roleFaction == PlayableFaction.SHADOW }.size
 
-        if (villagersAlive == shadowsAlive && timerTask.get() == null) {
+        if (villagersAlive == shadowsAlive && !timerStarted) {
             // Send anti-stall notification
             shadow.server.onlinePlayers.forEach { p ->
                 p.sendMessage(
@@ -163,6 +163,8 @@ class GameEnd(val shadow: Shadow) {
 
             val minutes = AtomicInteger(10)
             val seconds = AtomicInteger(0)
+
+            timerStarted = true
 
             // Send timer action bar message
             timerTask.set(Bukkit.getScheduler().runTaskTimer(shadow, Runnable {
@@ -235,5 +237,9 @@ class GameEnd(val shadow: Shadow) {
                 }
             }
         }, 0, 20))
+    }
+
+    companion object {
+        var timerStarted = false
     }
 }

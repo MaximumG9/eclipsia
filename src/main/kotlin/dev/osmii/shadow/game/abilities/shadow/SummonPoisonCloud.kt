@@ -17,7 +17,7 @@ import org.bukkit.persistence.PersistentDataType
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
-class SummonPoisonCloud : Ability {
+class SummonPoisonCloud(var shadow: Shadow) : Ability {
     override val item: ItemStack = ItemStack(Material.POTION)
 
     override val id = "POISONBURST"

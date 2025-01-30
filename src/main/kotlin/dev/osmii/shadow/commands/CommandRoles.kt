@@ -1,7 +1,7 @@
 package dev.osmii.shadow.commands
 
 import dev.osmii.shadow.Shadow
-import dev.osmii.shadow.game.rolelist.RolelistGUI
+import dev.osmii.shadow.gui.RolelistGUI
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender

@@ -1,7 +1,10 @@
 package dev.osmii.shadow.game.start
 
 import dev.osmii.shadow.Shadow
-import dev.osmii.shadow.enums.*
+import dev.osmii.shadow.enums.CID
+import dev.osmii.shadow.enums.Namespace
+import dev.osmii.shadow.enums.PlayableRole
+import dev.osmii.shadow.enums.RoleModifier
 import dev.osmii.shadow.util.ItemUtil
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Material
@@ -25,7 +28,7 @@ class P2GiveItems(private val shadow: Shadow) {
                 return@forEach
             }
             player.inventory.clear()
-            player.inventory.addItem(ItemStack(shadow.config.food.material.invoke(), foodAmount))
+            player.inventory.addItem(ItemStack(shadow.config.food.material.invoke(), shadow.config.foodAmount))
 
             if (role == PlayableRole.SHERIFF) {
                 val bow = ItemStack(Material.BOW, 1)
@@ -151,10 +154,5 @@ class P2GiveItems(private val shadow: Shadow) {
         }
 
         P3SpawnEnderEyes(shadow).spawnEnderEyes()
-    }
-
-    companion object {
-        var food : Foods = Foods.RANDOM
-        var foodAmount : Int = 16
     }
 }

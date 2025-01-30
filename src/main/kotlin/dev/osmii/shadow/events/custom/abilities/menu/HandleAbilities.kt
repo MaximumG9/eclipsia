@@ -47,7 +47,6 @@ class HandleAbilities(val shadow: Shadow) : Listener {
             abilities.shuffle()
         }
 
-
         if (abilities.count() > 4) {
             if (abilities.count() < 9) {
                 abilities.forEachIndexed { index, ability ->
