@@ -20,10 +20,10 @@ import java.util.*
 
 class RolelistGUI(private val shadow: Shadow) {
 
-    fun showGuessRoleInventory(player: Player, callback : (player: Player, role: PlayableRole) -> Unit) {
+    fun showGuessRoleInventory(player: Player, roleFilter: (PlayableRole) -> Boolean, callback : (player: Player, role: PlayableRole) -> Unit) {
         val inv = Bukkit.createInventory(null, 54, Component.text("Guess Role").color(NamedTextColor.DARK_RED))
 
-        PlayableRole.entries.forEach { role ->
+        PlayableRole.entries.filter(roleFilter).forEach { role ->
             if (role == PlayableRole.SPECTATOR) return@forEach
             val item = ItemStack(role.roleIcon)
             item.itemMeta = item.itemMeta.apply {

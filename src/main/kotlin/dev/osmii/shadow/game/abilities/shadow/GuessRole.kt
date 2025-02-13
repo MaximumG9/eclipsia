@@ -3,6 +3,7 @@ package dev.osmii.shadow.game.abilities.shadow
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.Namespace
 import dev.osmii.shadow.enums.PlayableFaction
+import dev.osmii.shadow.enums.PlayableRole
 import dev.osmii.shadow.game.abilities.Ability
 import dev.osmii.shadow.gui.PlayerSelectMenu
 import dev.osmii.shadow.gui.RolelistGUI
@@ -33,7 +34,7 @@ class GuessRole(val shadow: Shadow) : Ability {
         }
     }
 
-    override fun apply(player: Player, shadow: Shadow): Component {
+    override fun apply(player: Player, shadow: Shadow): Component? {
         if(!this::cooldown.isInitialized) cooldown = shadow.cooldownManager.getCooldown(this::class)
 
         val cooldownLeft = cooldown.checkCooldown(player)
@@ -66,9 +67,11 @@ class GuessRole(val shadow: Shadow) : Ability {
                 player,
                 listOf("Cancel"),
                 0,
-                { true },
+                { player -> shadow.gameState.currentRoles[player.uniqueId]?.roleFaction != PlayableFaction.SPECTATOR },
                 { _, target ->
-                    RolelistGUI(shadow).showGuessRoleInventory(player) { _, role ->
+                    RolelistGUI(shadow).showGuessRoleInventory(player,{ role ->
+                        role.roleFaction != shadow.gameState.currentRoles[player.uniqueId]?.roleFaction && role != PlayableRole.VILLAGER
+                    }) { _, role ->
                         if(shadow.isRole(target,role)) {
                             target.health = 0.0
                         } else {
@@ -80,6 +83,6 @@ class GuessRole(val shadow: Shadow) : Ability {
             )
         },2)
 
-        return MiniMessage.miniMessage().deserialize("<yellow>Opened Menu</yellow>")
+        return null
     }
 }
