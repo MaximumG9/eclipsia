@@ -1,19 +1,8 @@
 package dev.osmii.shadow.game.start
 
-import com.sk89q.worldedit.WorldEdit
-import com.sk89q.worldedit.bukkit.BukkitAdapter
-import com.sk89q.worldedit.function.mask.*
-import com.sk89q.worldedit.function.pattern.RandomPattern
-import com.sk89q.worldedit.history.change.BlockChange
-import com.sk89q.worldedit.history.change.Change
-import com.sk89q.worldedit.math.BlockVector3
-import com.sk89q.worldedit.math.Vector3
-import com.sk89q.worldedit.regions.CuboidRegion
-import com.sk89q.worldedit.world.block.BlockTypes
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.GamePhase
 import dev.osmii.shadow.enums.PlayableRole
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.ArmorStand
@@ -22,7 +11,6 @@ import org.bukkit.entity.Item
 import org.bukkit.entity.ItemDisplay
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
-import org.bukkit.util.BoundingBox
 import kotlin.random.Random
 
 const val ENDER_EYE_OVERWORLD_COUNT = 8
@@ -240,21 +228,21 @@ class P3SpawnEnderEyes(private val shadow: Shadow) {
     private fun createEnderEye(loc: Location): Item {
 
         loc.chunk.load()
-        loc.add(0.5, 1.0, 0.5)
+        val eyeLoc = loc.add(0.5, 1.0, 0.5)
 
-        val e = loc.world.spawnEntity(loc, EntityType.DROPPED_ITEM) as Item
+        val e = eyeLoc.world.spawnEntity(eyeLoc, EntityType.DROPPED_ITEM) as Item
         e.itemStack = ItemStack(Material.ENDER_EYE, 1)
         e.setWillAge(false)
         e.setCanMobPickup(false)
         e.isInvulnerable = true
         e.isUnlimitedLifetime = true
 
-        val display = loc.world.spawnEntity(loc, EntityType.ITEM_DISPLAY) as ItemDisplay
+        val display = eyeLoc.world.spawnEntity(eyeLoc, EntityType.ITEM_DISPLAY) as ItemDisplay
         display.itemStack = e.itemStack
         display.displayHeight = 3.0F
         display.displayWidth = 3.0F
 
-        val lookerArmorStand = loc.world.spawnEntity(loc, EntityType.ARMOR_STAND) as ArmorStand
+        val lookerArmorStand = eyeLoc.world.spawnEntity(eyeLoc, EntityType.ARMOR_STAND) as ArmorStand
         lookerArmorStand.addEquipmentLock(EquipmentSlot.HEAD, ArmorStand.LockType.REMOVING_OR_CHANGING)
         lookerArmorStand.setItem(EquipmentSlot.HEAD,e.itemStack)
         lookerArmorStand.isMarker = true
