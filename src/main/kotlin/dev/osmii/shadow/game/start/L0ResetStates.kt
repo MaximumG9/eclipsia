@@ -33,6 +33,15 @@ class L0ResetStates(private val shadow: Shadow) {
             player.level = 0
             player.totalExperience = 0
 
+            Attribute.entries.forEach { attribute ->
+                val attribInstance = player.getAttribute(attribute)
+
+                attribInstance?.modifiers?.forEach { modifier ->
+                    attribInstance.removeModifier(modifier)
+                }
+            }
+
+
             // Clear inventory and potion effects
             player.inventory.clear()
             player.enderChest.clear()

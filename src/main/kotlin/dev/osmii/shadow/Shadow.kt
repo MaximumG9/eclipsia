@@ -11,6 +11,7 @@ import dev.osmii.shadow.events.HandleItemInteractionRestrict
 import dev.osmii.shadow.events.custom.HandleDayNight
 import dev.osmii.shadow.events.custom.HandleParticipationToggle
 import dev.osmii.shadow.events.custom.abilities.HandleAbilityTNTExplosion
+import dev.osmii.shadow.events.custom.abilities.item.HandleRightClickHeart
 import dev.osmii.shadow.events.custom.abilities.item.sheriff.HandleSheriffBow
 import dev.osmii.shadow.events.custom.abilities.item.trident.HandleTrident
 import dev.osmii.shadow.events.custom.abilities.item.trident.HandleTridentCooldown
@@ -73,6 +74,9 @@ class Shadow : JavaPlugin() {
         Bukkit.getPluginManager().registerEvents(HandleMoveRestrict(this), this)
 
         Bukkit.getPluginManager().registerEvents(HandleSheriffBow(this), this)
+
+        Bukkit.getPluginManager().registerEvents(HandleRightClickHeart(this), this)
+
         Bukkit.getPluginManager().registerEvents(HandleTrident(this), this)
         Bukkit.getPluginManager().registerEvents(HandleTridentCooldown(), this)
 

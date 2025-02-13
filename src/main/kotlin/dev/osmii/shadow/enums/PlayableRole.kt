@@ -4,6 +4,7 @@ import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.game.abilities.Ability
 import dev.osmii.shadow.game.abilities.shadow.GuessRole
 import dev.osmii.shadow.game.abilities.shadow.ToggleStrength
+import dev.osmii.shadow.game.abilities.villagers.GetHeart
 import dev.osmii.shadow.game.abilities.villagers.SwapPlayers
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Material
@@ -32,10 +33,7 @@ enum class PlayableRole(
 
     LIFEWEAVER(PlayableFaction.VILLAGE, PlayableSubfaction.VILLAGE_PROTECTIVE, Material.GOLDEN_APPLE,
         "Lifeweaver", "Donate your health to others.", NamedTextColor.DARK_AQUA,
-        false, listOf()),
-    CORONER(PlayableFaction.VILLAGE, PlayableSubfaction.VILLAGE_INVESTIGATIVE, Material.SHEARS,
-        "Coroner", "Inspect bodies and uncover death causes.", NamedTextColor.GREEN,
-        false, listOf()),
+        false, listOf(::GetHeart)),
     LOOKER(PlayableFaction.VILLAGE, PlayableSubfaction.VILLAGE_SUPPORT, Material.ENDER_EYE,
         "Seer (Looker)", "Ender eyes glow", NamedTextColor.GREEN,
         false, listOf()),

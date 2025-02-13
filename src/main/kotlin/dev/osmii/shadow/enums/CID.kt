@@ -10,6 +10,8 @@ class CID {
 
         const val ROLE_SELECT_GUESS_ROLE = "role-select-guess-role"
 
+        const val HEART = "lifeweaver-heart"
+
         const val ABILITY_SELECT_PLAYER = "ability-select-player"
         const val ABILITY_SELECT_PLAYER_PREV = "ability-select-player-prev"
         const val ABILITY_SELECT_PLAYER_NEXT = "ability-select-player-next"
