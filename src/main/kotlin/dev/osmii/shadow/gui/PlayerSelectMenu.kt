@@ -103,7 +103,7 @@ object PlayerSelectMenu {
             )
         }
 
-        shadow.guiCallbacks[menu] = { p, inventory, item ->
+        shadow.guiCallbacks[menu] = { p, _, item ->
             when(item.itemMeta.persistentDataContainer[Namespace.CUSTOM_ID,PersistentDataType.STRING]) {
                 CID.ABILITY_SELECT_PLAYER -> {
                     p.closeInventory()
