@@ -38,6 +38,10 @@ enum class PlayableRole(
     LOOKER(PlayableFaction.VILLAGE, PlayableSubfaction.VILLAGE_SUPPORT, Material.ENDER_EYE,
         "Seer (Looker)", "Ender eyes glow", NamedTextColor.GREEN,
         false, listOf()),
+    SWAPPER(PlayableFaction.VILLAGE, PlayableSubfaction.VILLAGE_SUPPORT, Material.ENDER_PEARL,
+        "Swapper", "Swap players", NamedTextColor.GREEN,
+        false, listOf(::SwapPlayers)),
+
 
     ORACLE(PlayableFaction.SHADOW, PlayableSubfaction.SHADOW_KILLING, Material.BEACON,
         "Oracle", "Kill others by guessing their role.", NamedTextColor.DARK_PURPLE,
