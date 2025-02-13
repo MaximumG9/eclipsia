@@ -52,7 +52,6 @@ class Shadow : JavaPlugin() {
     val abilityManager = HandleAbilities(this)
     val jesterCooldowns : HashMap<UUID,Int> = HashMap()
     val guiCallbacks : HashMap<Inventory,(player: Player, inventory: Inventory, itemstack: ItemStack) -> Unit> = HashMap()
-    val guessRoleCallbacks : HashMap<Inventory,(player: Player, role: PlayableRole) -> Unit> = HashMap()
     val jesterHitHandler = HandleJesterHit(this)
 
     val overworld: World
@@ -82,7 +81,7 @@ class Shadow : JavaPlugin() {
         Bukkit.getPluginManager().registerEvents(HandleAddModifier(this), this)
         Bukkit.getPluginManager().registerEvents(HandleGUICallback(this), this)
         Bukkit.getPluginManager().registerEvents(abilityManager, this)
-        Bukkit.getPluginManager().registerEvents(HandleEyePickup(this), this)
+        Bukkit.getPluginManager().registerEvents(HandleEyes(this), this)
 
         Bukkit.getPluginManager().registerEvents(HandleAdvancementEvent(this), this)
 

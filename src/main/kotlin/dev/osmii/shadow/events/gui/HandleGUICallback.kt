@@ -5,6 +5,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryCloseEvent
 
 class HandleGUICallback(val shadow: Shadow) : Listener {
     @EventHandler
@@ -18,5 +19,10 @@ class HandleGUICallback(val shadow: Shadow) : Listener {
                 e.currentItem = null
             }
         }
+    }
+
+    @EventHandler
+    fun onGUIClose(e : InventoryCloseEvent) {
+        shadow.guiCallbacks.remove(e.inventory)
     }
 }
