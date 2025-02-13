@@ -1,4 +1,4 @@
-package dev.osmii.shadow.game.abilities.shadow
+package dev.osmii.shadow.game.abilities
 
 import dev.osmii.shadow.Shadow
 import org.bukkit.entity.Player

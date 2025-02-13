@@ -3,7 +3,7 @@ package dev.osmii.shadow.game.abilities.villagers
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.PlayableFaction
 import dev.osmii.shadow.game.abilities.Ability
-import dev.osmii.shadow.game.abilities.shadow.Cooldown
+import dev.osmii.shadow.game.abilities.Cooldown
 import dev.osmii.shadow.gui.PlayerSelectMenu
 import dev.osmii.shadow.util.TimeUtil
 import net.kyori.adventure.text.Component

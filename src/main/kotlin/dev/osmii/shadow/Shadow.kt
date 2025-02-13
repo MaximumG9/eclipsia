@@ -25,7 +25,7 @@ import dev.osmii.shadow.events.game.*
 import dev.osmii.shadow.events.gui.HandleAddModifier
 import dev.osmii.shadow.events.gui.HandleAddRole
 import dev.osmii.shadow.events.gui.HandleGUICallback
-import dev.osmii.shadow.game.abilities.shadow.CooldownManager
+import dev.osmii.shadow.game.abilities.CooldownManager
 import dev.osmii.shadow.game.abilities.shadow.PoisonCloud
 import org.bukkit.Bukkit
 import org.bukkit.World

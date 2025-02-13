@@ -1,11 +1,10 @@
-package dev.osmii.shadow.game.abilities.shadow
+package dev.osmii.shadow.game.abilities
 
 import dev.osmii.shadow.Shadow
-import dev.osmii.shadow.game.abilities.Ability
 import kotlin.reflect.KClass
 
 class CooldownManager(val shadow: Shadow) {
-    private var cooldownMap: HashMap<String,Cooldown> = HashMap()
+    private var cooldownMap: HashMap<String, Cooldown> = HashMap()
 
     fun getCooldown(clazz: KClass<out Ability>) : Cooldown {
         val name = clazz.qualifiedName!!

@@ -4,6 +4,7 @@ import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.game.abilities.Ability
 import dev.osmii.shadow.game.abilities.shadow.GuessRole
 import dev.osmii.shadow.game.abilities.shadow.ToggleStrength
+import dev.osmii.shadow.game.abilities.villagers.SwapPlayers
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Material
 import kotlin.reflect.KFunction1
