@@ -1,10 +1,12 @@
 package dev.osmii.shadow.game.abilities.villagers
 
 import dev.osmii.shadow.Shadow
+import dev.osmii.shadow.enums.Namespace
 import dev.osmii.shadow.enums.PlayableFaction
 import dev.osmii.shadow.game.abilities.Ability
 import dev.osmii.shadow.game.abilities.Cooldown
 import dev.osmii.shadow.gui.PlayerSelectMenu
+import dev.osmii.shadow.util.ItemUtil
 import dev.osmii.shadow.util.TimeUtil
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -14,11 +16,28 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
 import java.time.Duration
 
 class SwapPlayers(var shadow: Shadow) : Ability {
     override val id = "swap-players"
     override val item: ItemStack = ItemStack(Material.ENDER_PEARL)
+
+    init {
+        item.itemMeta = item.itemMeta.apply {
+            this.displayName(Component.text("Swap Players").color(NamedTextColor.BLUE))
+            this.persistentDataContainer.set(
+                Namespace.ABILITY_SELECT,
+                PersistentDataType.STRING,
+                id
+            )
+            this.persistentDataContainer.set(
+                Namespace.FORBIDDEN,
+                PersistentDataType.BYTE_ARRAY,
+                ItemUtil.forbidden(drop = true, use = false, move = false, moveContainer = false)
+            )
+        }
+    }
 
     private lateinit var cooldown: Cooldown
 

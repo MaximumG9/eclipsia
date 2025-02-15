@@ -38,13 +38,13 @@ enum class PlayableRole(
         "Seer (Looker)", "Ender eyes glow", NamedTextColor.GREEN,
         false, listOf()),
     SWAPPER(PlayableFaction.VILLAGE, PlayableSubfaction.VILLAGE_SUPPORT, Material.ENDER_PEARL,
-        "Swapper", "Swap players", NamedTextColor.GREEN,
+        "Swapper", "Swap players", NamedTextColor.BLUE,
         false, listOf(::SwapPlayers)),
 
 
     ORACLE(PlayableFaction.SHADOW, PlayableSubfaction.SHADOW_KILLING, Material.BEACON,
         "Oracle", "Kill others by guessing their role.", NamedTextColor.DARK_PURPLE,
-        false, listOf(::GuessRole)),
+        false, listOf(::GuessRole, ::ToggleStrength)),
     TRIDENT(PlayableFaction.SHADOW, PlayableSubfaction.SHADOW_KILLING, Material.TRIDENT,
         "Poseidon's Wrath", "Use your trident to wipe out the villagers", NamedTextColor.BLUE,
         false, listOf(::ToggleStrength)),
