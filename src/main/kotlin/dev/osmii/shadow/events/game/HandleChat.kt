@@ -11,6 +11,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
+import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -66,8 +67,10 @@ class HandleChat(private val shadow: Shadow) : Listener {
             return
         }
 
+        val maxHealth = e.player.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!.value
+
         // If player is not on full health, cancel
-        if (e.player.health < 19.50) {
+        if (e.player.health < maxHealth - 1) {
             e.isCancelled = true
             e.player.sendMessage(
                 Component.text("You must be at full health to send a message.")
