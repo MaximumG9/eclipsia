@@ -13,21 +13,27 @@ class HandleRightClickHeart(val shadow: Shadow) : Listener {
 
     @EventHandler
     fun onRightClickHeart(e: PlayerInteractEvent) {
-        if (e.item == null || !ItemUtil.customIdIs(e.item!!, CID.HEART)) return
+        val item = e.item
+        if (item == null || !ItemUtil.customIdIs(item, CID.HEART)) return
+
+        shadow.logger.info("tried to redeem heart")
 
         val player = e.player
 
         val maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH)!!
 
-        val possibleRemovalModifier = maxHealth.modifiers.filter { modifier ->
+        val possibleRemovalModifier = maxHealth.modifiers.firstOrNull { modifier ->
             modifier.amount == -2.0 && modifier.operation == AttributeModifier.Operation.ADD_NUMBER
-        }.firstOrNull()
+        }
 
         if(possibleRemovalModifier != null) {
             maxHealth.removeModifier(possibleRemovalModifier)
-            return
         } else {
             maxHealth.addModifier(AttributeModifier("addHeart",2.0,AttributeModifier.Operation.ADD_NUMBER))
         }
+
+        e.isCancelled = true
+
+        item.amount -= 1
     }
 }

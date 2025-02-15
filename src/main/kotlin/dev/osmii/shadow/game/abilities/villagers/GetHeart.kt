@@ -4,6 +4,7 @@ import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.CID
 import dev.osmii.shadow.enums.Namespace
 import dev.osmii.shadow.game.abilities.Ability
+import dev.osmii.shadow.util.ItemUtil
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Material
@@ -14,18 +15,23 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 
 class GetHeart(val shadow: Shadow) : Ability {
-    override val id = "swap-players"
-    override val item: ItemStack = ItemStack(Material.ENDER_PEARL)
-
-    private val heartItem : ItemStack = ItemStack(Material.ENCHANTED_GOLDEN_APPLE)
+    override val id = "get-heart"
+    override val item: ItemStack = ItemStack(Material.GLOWSTONE_DUST)
 
     init {
-        heartItem.itemMeta.apply {
-            this.displayName(Component.text("Heart").color(NamedTextColor.RED))
+
+
+        item.itemMeta = item.itemMeta.apply {
+            this.displayName(Component.text("Get Heart").color(NamedTextColor.RED))
             this.persistentDataContainer.set(
-                Namespace.CUSTOM_ID,
+                Namespace.ABILITY_SELECT,
                 PersistentDataType.STRING,
-                CID.HEART
+                id
+            )
+            this.persistentDataContainer.set(
+                Namespace.FORBIDDEN,
+                PersistentDataType.BYTE_ARRAY,
+                ItemUtil.forbidden(drop = true, use = false, move = false, moveContainer = false)
             )
         }
     }
@@ -34,9 +40,24 @@ class GetHeart(val shadow: Shadow) : Ability {
         val maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH)
         if(maxHealth!!.value > 2) {
             maxHealth.addModifier(AttributeModifier("removeHeart",-2.0,AttributeModifier.Operation.ADD_NUMBER))
-            player.inventory.addItem(heartItem.clone())
+            player.inventory.addItem(ItemStack(heartItem))
         }
 
         return null
+    }
+
+    companion object {
+        val heartItem : ItemStack = ItemStack(Material.ENCHANTED_GOLDEN_APPLE)
+
+        init {
+            heartItem.itemMeta = heartItem.itemMeta.apply {
+                this.displayName(Component.text("Heart").color(NamedTextColor.RED))
+                this.persistentDataContainer.set(
+                    Namespace.CUSTOM_ID,
+                    PersistentDataType.STRING,
+                    CID.HEART
+                )
+            }
+        }
     }
 }
