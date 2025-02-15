@@ -26,6 +26,9 @@ class CommandConfig(val shadow: Shadow) {
     fun register(dispatcher : CommandDispatcher<CommandSourceStack>) {
         dispatcher.register(
             literal("\$config")
+                .requires({ c ->
+                    return@requires c.hasPermission(2)
+                })
                 .then(
                     literal("shadowAbility")
                         .then(
