@@ -12,7 +12,7 @@ class CommandRoles(val shadow: Shadow) : CommandExecutor {
         val player = commandSender as Player
 
         if (args.isEmpty()) {
-            RolelistGUI(shadow).showRoleBook(player)
+            RolelistGUI(shadow).showAddRoleBook(player)
             return false
         }
 
@@ -25,7 +25,7 @@ class CommandRoles(val shadow: Shadow) : CommandExecutor {
             }
             "removeall" -> {
                 shadow.gameState.originalRolelist.roles.clear()
-                RolelistGUI(shadow).showRoleBook(player)
+                RolelistGUI(shadow).showAddRoleBook(player)
                 return false
             }
             "remove" -> {
@@ -37,7 +37,7 @@ class CommandRoles(val shadow: Shadow) : CommandExecutor {
                 // Ensure that the ID to remove actually exists
                 if(index == -1 || id > shadow.gameState.originalRolelist.roles.size || id < 0) return false
                 shadow.gameState.originalRolelist.roles.removeAt(id)
-                RolelistGUI(shadow).showRoleBook(player)
+                RolelistGUI(shadow).showAddRoleBook(player)
                 return false
             }
         }

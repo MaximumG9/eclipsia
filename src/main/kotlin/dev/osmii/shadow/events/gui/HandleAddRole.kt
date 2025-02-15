@@ -34,7 +34,7 @@ class HandleAddRole(val shadow: Shadow) : Listener {
 
             Bukkit.getScheduler().runTaskLater(shadow, Runnable {
                 e.whoClicked.closeInventory()
-                RolelistGUI(shadow).showRoleBook(e.whoClicked as Player)
+                RolelistGUI(shadow).showAddRoleBook(e.whoClicked as Player)
             }, 1)
             return
         }
@@ -53,7 +53,7 @@ class HandleAddRole(val shadow: Shadow) : Listener {
 
         Bukkit.getScheduler().runTaskLater(shadow, Runnable {
             e.whoClicked.closeInventory()
-            RolelistGUI(shadow).showRoleBook(e.whoClicked as Player)
+            RolelistGUI(shadow).showAddRoleBook(e.whoClicked as Player)
         }, 1)
     }
 }

@@ -109,6 +109,7 @@ class Shadow : JavaPlugin() {
 
         CommandConfig(this).register((this.server as CraftServer).server.commands.dispatcher)
         CommandDebug(this).register((this.server as CraftServer).server.commands.dispatcher)
+        CommandViewRoles(this).register((this.server as CraftServer).server.commands.dispatcher)
 
         // Create player team
         var team = Bukkit.getScoreboardManager().mainScoreboard.getTeam("players")

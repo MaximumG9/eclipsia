@@ -158,6 +158,30 @@ class RolelistGUI(private val shadow: Shadow) {
             val pageComponent = Component.join(
                 JoinConfiguration.separator(Component.newline()),
                 page.map { role ->
+                    role.selectorText
+                }
+            )
+            pageList.add(pageComponent)
+        }
+
+        book = book.pages(pageList)
+
+        player.openBook(book)
+    }
+
+    fun showAddRoleBook(player: Player) {
+        var book = Book.book(
+            Component.text("Roles").color(NamedTextColor.BLUE),
+            Component.text("Shadow").color(NamedTextColor.GRAY),
+        )
+
+        // Split into pages of 14 roles
+        val pages = shadow.gameState.originalRolelist.getSelectors().chunked(14)
+        val pageList = ArrayList<Component>()
+        pages.forEachIndexed { pageNumber, page ->
+            val pageComponent = Component.join(
+                JoinConfiguration.separator(Component.newline()),
+                page.map { role ->
                     // Add text to remove a role from the list
                     role.selectorText?.hoverEvent(
                         Component.text("Click to remove this role from the role list").color(NamedTextColor.GRAY)
