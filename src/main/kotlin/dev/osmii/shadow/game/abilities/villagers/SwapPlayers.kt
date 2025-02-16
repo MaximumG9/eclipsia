@@ -70,6 +70,7 @@ class SwapPlayers(var shadow: Shadow) : Ability {
                         0,
                         { player -> shadow.gameState.currentRoles[player.uniqueId]?.roleFaction != PlayableFaction.SPECTATOR && player != firstTarget },
                         { _, secondTarget ->
+                            cooldown.resetCooldown(player)
                             val times = Title.Times.times(Duration.ofSeconds(0),Duration.ofSeconds(1),Duration.ofMillis(250))
                             firstTarget.showTitle(Title.title(
                                 Component.text("Swapping In:").color(NamedTextColor.DARK_PURPLE),
