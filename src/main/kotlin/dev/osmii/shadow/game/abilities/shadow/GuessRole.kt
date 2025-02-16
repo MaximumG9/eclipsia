@@ -73,6 +73,8 @@ class GuessRole(val shadow: Shadow) : Ability {
                     RolelistGUI(shadow).showGuessRoleInventory(player,{ role ->
                         role.roleFaction != shadow.gameState.currentRoles[player.uniqueId]?.roleFaction && role != PlayableRole.VILLAGER
                     }) { _, role ->
+                        player.closeInventory()
+
                         if(shadow.isRole(target,role)) {
                             target.health = 0.0
                         } else {
