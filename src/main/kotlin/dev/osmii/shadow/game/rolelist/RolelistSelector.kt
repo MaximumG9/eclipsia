@@ -69,7 +69,7 @@ class RolelistSelector : Comparable<RolelistSelector> {
 
     constructor(e: String) {
         when (e) {
-            "all" -> PlayableRole.entries.forEach { role ->
+            "all" -> PlayableRole.entries.filter { role -> role.roleFaction != PlayableFaction.SPECTATOR }.forEach { role ->
                 roles.add(role)
                 selectorText = Component.text("Any").color(NamedTextColor.GRAY)
                 specificity = -1

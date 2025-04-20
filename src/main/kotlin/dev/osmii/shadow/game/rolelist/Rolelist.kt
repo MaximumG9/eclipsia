@@ -40,13 +40,13 @@ class Rolelist {
             }
             val role = sel.mutableRoles.random()
             roleList.add(role)
-            if (role.isUnique) {
+            /*if (role.isUnique) {
                 this.roles.forEach { selector2 ->
                     Shadow.logger?.info("2: ${selector2.roles}")
                     selector2.mutableRoles.remove(role)
                 }
                 continue
-            }
+            }*/
         }
 
         pickedRoles = roleList

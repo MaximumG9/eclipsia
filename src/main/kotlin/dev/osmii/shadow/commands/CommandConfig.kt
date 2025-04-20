@@ -242,6 +242,20 @@ class CommandConfig(val shadow: Shadow) {
                                 }
                         )
                 )
+                .then(
+                    literal("timeToJesterWin")
+                        .then(
+                            argument("time", integer(0))
+                                .executes { context ->
+                                    val amount = getInteger(context,"time")
+
+                                    shadow.config.timeToJesterWin = amount
+
+                                    context.source.sendSuccess({Component.literal("Set jester timer to $amount")}, true)
+                                    return@executes amount
+                                }
+                        )
+                )
         )
     }
 

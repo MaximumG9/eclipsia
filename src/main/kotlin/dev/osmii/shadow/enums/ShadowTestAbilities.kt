@@ -6,7 +6,7 @@ import dev.osmii.shadow.game.abilities.shadow.*
 import kotlin.reflect.KClass
 
 enum class ShadowTestAbilities(val constructor: (shadow : Shadow) -> Ability, val clazz : KClass<out Ability>) {
-    ASSASSINATE({shadow -> KillOneNearby(shadow)}, KillOneNearby::class),
+    // ASSASSINATE({shadow -> KillOneNearby(shadow)}, KillOneNearby::class),
     POISONBURST({shadow -> SummonPoisonCloud(shadow)}, SummonPoisonCloud::class),
     CULL({shadow -> ScalingDamageAll(shadow)}, ScalingDamageAll::class),
     BEGONE({shadow -> TeleportRandomPlayer(shadow)}, TeleportRandomPlayer::class),

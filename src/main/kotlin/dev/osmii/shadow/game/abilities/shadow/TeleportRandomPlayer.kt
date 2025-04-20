@@ -50,9 +50,8 @@ class TeleportRandomPlayer(val shadow: Shadow) : Ability {
         targets.remove(player)
         targets = targets.filter {
             (shadow.gameState.participationStatus[it.uniqueId] == true) &&
-                    !shadow.isRoleFaction(it,PlayableFaction.SHADOW) &&
-                    !shadow.isRoleFaction(it,PlayableFaction.SHADOW)
-
+                !shadow.isRoleFaction(it,PlayableFaction.SHADOW) &&
+                !shadow.isRoleFaction(it,PlayableFaction.SPECTATOR)
         }
 
         if (targets.isNotEmpty()) {

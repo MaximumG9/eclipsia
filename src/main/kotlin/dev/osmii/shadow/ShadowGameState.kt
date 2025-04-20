@@ -11,6 +11,8 @@ import java.util.*
 class ShadowGameState {
     var currentPhase: GamePhase = GamePhase.NONE
 
+    var jesterWon = true
+
     var participationStatus = HashMap<UUID, Boolean>()
 
     var startTick: Int = 0

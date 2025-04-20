@@ -23,6 +23,8 @@ class L0ResetStates(private val shadow: Shadow) {
 
         shadow.jesterCooldowns.clear()
 
+        shadow.gameState.jesterWon = false
+
         shadow.server.onlinePlayers.forEach { player ->
             // Reset player data
             player.gameMode = GameMode.ADVENTURE

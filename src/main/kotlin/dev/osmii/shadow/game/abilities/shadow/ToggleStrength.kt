@@ -18,7 +18,7 @@ import org.bukkit.potion.PotionEffectType
 class ToggleStrength(val shadow: Shadow) : Ability {
     override val item: ItemStack = ItemStack(Material.POTION)
 
-    override val id = "ASSASSINATE"
+    override val id = "TOGGLE_STRENGTH"
 
     private var strength = false
 

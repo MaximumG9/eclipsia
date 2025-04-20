@@ -16,4 +16,5 @@ class Config {
     var cullNightly = true
     var food = Foods.BREAD
     var foodAmount = 16
+    var timeToJesterWin = 20 * 60 * 5
 }

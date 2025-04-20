@@ -73,6 +73,8 @@ class Shadow : JavaPlugin() {
         Bukkit.getPluginManager().registerEvents(HandleJoinLeave(this), this)
         Bukkit.getPluginManager().registerEvents(HandleMoveRestrict(this), this)
 
+        Bukkit.getPluginManager().registerEvents(HandleDragonDeath(this), this)
+
         Bukkit.getPluginManager().registerEvents(HandleSheriffBow(this), this)
 
         Bukkit.getPluginManager().registerEvents(HandleRightClickHeart(this), this)

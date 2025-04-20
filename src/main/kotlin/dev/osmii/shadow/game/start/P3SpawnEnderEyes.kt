@@ -11,6 +11,7 @@ import org.bukkit.entity.Item
 import org.bukkit.entity.ItemDisplay
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
+import org.bukkit.util.Vector
 import kotlin.random.Random
 
 const val ENDER_EYE_OVERWORLD_COUNT = 8
@@ -234,6 +235,7 @@ class P3SpawnEnderEyes(private val shadow: Shadow) {
         e.itemStack = ItemStack(Material.ENDER_EYE, 1)
         e.setWillAge(false)
         e.setCanMobPickup(false)
+        e.velocity = Vector(0,0,0)
         e.isInvulnerable = true
         e.isUnlimitedLifetime = true
 

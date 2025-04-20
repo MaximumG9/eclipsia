@@ -23,6 +23,7 @@ class GameEnd(val shadow: Shadow) {
     private var timerTask = AtomicReference<BukkitTask>()
     private var antiStallTask = AtomicReference<BukkitTask>()
     private var damagerTask = AtomicReference<BukkitTask>()
+    private var jesterTimerTask = AtomicReference<BukkitTask>()
 
     fun checkGameEnd(justifiedDeadJesters : Optional<UUID>) {
         // Check that the game is actually over (overrides if ender dragon was killed)
@@ -45,9 +46,6 @@ class GameEnd(val shadow: Shadow) {
             else -> GameResult.DRAW
         }
 
-        shadow.gameState.startTick = -1
-        shadow.gameState.currentPhase = GamePhase.IN_BETWEEN_ROUND
-
         when (result) {
             GameResult.SHADOW_WINS -> {
                 shadow.server.broadcast(MiniMessage.miniMessage().deserialize("<red>The shadows have won!</red>"))
@@ -56,7 +54,7 @@ class GameEnd(val shadow: Shadow) {
                     p.showTitle(
                         Title.title(
                             MiniMessage.miniMessage().deserialize("<red>Shadows Win</red>"),
-                            Component.empty(),
+                            if (shadow.gameState.jesterWon) Component.text("& Jester Win").color(PlayableRole.JESTER.roleColor) else Component.empty(),
                             Title.Times.times(TimeUtil.ticks(10), TimeUtil.ticks(70), TimeUtil.ticks(20))
                         )
                     )
@@ -77,7 +75,7 @@ class GameEnd(val shadow: Shadow) {
                     p.showTitle(
                         Title.title(
                             MiniMessage.miniMessage().deserialize("<green>Villagers Win</green>"),
-                            Component.empty(),
+                            if (shadow.gameState.jesterWon) Component.text("& Jester Win").color(PlayableRole.JESTER.roleColor) else Component.empty(),
                             Title.Times.times(TimeUtil.ticks(10), TimeUtil.ticks(70), TimeUtil.ticks(20))
                         )
                     )
@@ -99,7 +97,7 @@ class GameEnd(val shadow: Shadow) {
                     p.showTitle(
                         Title.title(
                             MiniMessage.miniMessage().deserialize("<gray>Match Draw</gray>"),
-                            Component.empty(),
+                            if (shadow.gameState.jesterWon) Component.text("& Jester Win").color(PlayableRole.JESTER.roleColor) else Component.empty(),
                             Title.Times.times(TimeUtil.ticks(10), TimeUtil.ticks(70), TimeUtil.ticks(20))
                         )
                     )
@@ -111,12 +109,14 @@ class GameEnd(val shadow: Shadow) {
                 shadow.server.onlinePlayers.forEach { p ->
                     p.showTitle(
                         Title.title(
-                            Component.text("Jester Win").color(PlayableRole.JESTER.roleColor),
                             Component.empty(),
+                            Component.text("Jester Win").color(PlayableRole.JESTER.roleColor),
                             Title.Times.times(TimeUtil.ticks(10), TimeUtil.ticks(70), TimeUtil.ticks(20))
                         )
                     )
                 }
+
+                shadow.gameState.jesterWon = true
 
                 shadow.gameState.originalRoles.forEach { (uuid, role) ->
                     if (role == PlayableRole.JESTER && justifiedDeadJesters.get() == uuid) {
@@ -124,8 +124,67 @@ class GameEnd(val shadow: Shadow) {
                         shadow.gameState.currentWinners.add(shadow.server.getPlayer(uuid)!!)
                     }
                 }
+
+                val time = AtomicInteger(shadow.config.timeToJesterWin)
+
+
+                this.jesterTimerTask.set(
+                    Bukkit.getScheduler().runTaskTimer(shadow, Runnable {
+                    val t = time.get()
+
+                    if(t % 20 == 0) {
+                        shadow.server.onlinePlayers.forEach { p ->
+                            p.sendActionBar(
+                                Component.text("Jester Timer:${TimeUtil.ticksToText(t)}").color(PlayableRole.JESTER.roleColor)
+                            )
+                        }
+                    }
+
+                    time.set(t-1)
+
+                    if(t == 0) {
+                        shadow.server.onlinePlayers.forEach { p ->
+                            p.showTitle(
+                                Title.title(
+                                    Component.text("Jester Win").color(PlayableRole.JESTER.roleColor),
+                                    Component.empty(),
+                                    Title.Times.times(TimeUtil.ticks(10), TimeUtil.ticks(70), TimeUtil.ticks(20))
+                                )
+                            )
+                        }
+
+                        shadow.gameState.startTick = -1
+                        shadow.gameState.currentPhase = GamePhase.IN_BETWEEN_ROUND
+
+                        shadow.server.onlinePlayers.forEach { p ->
+                            p.clearActivePotionEffects()
+                        }
+
+                        shadow.server.onlinePlayers.forEach { p ->
+                            p.sendMessage(
+                                Component.text("Game winners: ")
+                                    .color(NamedTextColor.BLUE)
+                                    .append(
+                                        Component.join(
+                                            JoinConfiguration.separator(Component.text(", ").color(NamedTextColor.BLUE)),
+                                            shadow.gameState.currentWinners.map { Component.text(it.name).color(NamedTextColor.GOLD) }
+                                        )
+                                    )
+                            )
+                        }
+                        this.jesterTimerTask.get().cancel()
+                    }
+                },0L,1L)
+                )
+                jesterTimerStarted = true
+                return
             }
         }
+
+        shadow.gameState.startTick = -1
+        shadow.gameState.currentPhase = GamePhase.IN_BETWEEN_ROUND
+        this.jesterTimerTask.get().cancel()
+        jesterTimerStarted = false
 
         shadow.server.onlinePlayers.forEach { p ->
             p.clearActivePotionEffects()
@@ -241,5 +300,6 @@ class GameEnd(val shadow: Shadow) {
 
     companion object {
         var timerStarted = false
+        var jesterTimerStarted = false
     }
 }
