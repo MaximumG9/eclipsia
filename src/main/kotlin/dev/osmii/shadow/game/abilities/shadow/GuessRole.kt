@@ -36,7 +36,11 @@ class GuessRole(val shadow: Shadow) : Ability {
     }
 
     override fun apply(player: Player, shadow: Shadow): Component? {
-        if(!this::cooldown.isInitialized) cooldown = shadow.cooldownManager.getCooldown(this::class)
+        if(!this::cooldown.isInitialized) {
+            cooldown = shadow.cooldownManager.getCooldown(this::class)
+            // cooldown.cooldown = 0;
+            cooldown.initialCooldown = 0;
+        }
 
         val cooldownLeft = cooldown.checkCooldown(player)
         if (cooldownLeft > 0) {
@@ -74,6 +78,8 @@ class GuessRole(val shadow: Shadow) : Ability {
                         role.roleFaction != shadow.gameState.currentRoles[player.uniqueId]?.roleFaction && role != PlayableRole.VILLAGER
                     }) { _, role ->
                         player.closeInventory()
+
+                        cooldown.resetCooldown(player)
 
                         if(shadow.isRole(target,role)) {
                             target.health = 0.0

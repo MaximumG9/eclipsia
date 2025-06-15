@@ -116,6 +116,8 @@ class GameEnd(val shadow: Shadow) {
                     )
                 }
 
+                if(shadow.gameState.jesterWon) return;
+
                 shadow.gameState.jesterWon = true
 
                 shadow.gameState.originalRoles.forEach { (uuid, role) ->

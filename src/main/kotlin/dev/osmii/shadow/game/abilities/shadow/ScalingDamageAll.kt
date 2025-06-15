@@ -40,6 +40,10 @@ class ScalingDamageAll(val shadow: Shadow) : Ability {
         }
     }
 
+    fun resetNight() {
+        this.hasActivatedStrengthTonight = false
+    }
+
     override fun apply(player: Player, shadow: Shadow) : Component {
         if(shadow.config.cullNightly) {
             if(shadow.overworld.isDayTime) {

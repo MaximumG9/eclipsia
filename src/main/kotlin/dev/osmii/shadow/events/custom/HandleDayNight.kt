@@ -3,6 +3,7 @@ package dev.osmii.shadow.events.custom
 import dev.osmii.shadow.Shadow
 import dev.osmii.shadow.enums.GamePhase
 import dev.osmii.shadow.enums.PlayableFaction
+import dev.osmii.shadow.game.abilities.shadow.ScalingDamageAll
 import dev.osmii.shadow.game.abilities.shadow.ToggleStrength
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -46,6 +47,16 @@ class HandleDayNight(val shadow: Shadow) {
                         MiniMessage.miniMessage().deserialize("<green>The sky clears.</green>")
                     )
                 }
+
+                shadow.server.onlinePlayers.forEach { p ->
+                    shadow.abilityManager.getAbilities(p)?.forEach { ability ->
+                        if(ability is ScalingDamageAll) {
+                            ability.resetNight();
+                        }
+                    }
+                }
+
+
             }
             if (world.time >= 12452L) {
                 world.time += nightSpeedMult - 1
